@@ -1,7 +1,3 @@
-"""
-🧠 BRAIN TUMOR CLASSIFICATION MODEL TRAINING
-Run in VS Code: Right-click → Run Python File in Terminal
-"""
 
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
@@ -20,7 +16,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 print("="*60)
-print("🧠 BRAIN TUMOR CLASSIFICATION - TRAINING SCRIPT")
+print(" BRAIN TUMOR CLASSIFICATION - TRAINING SCRIPT")
 print("="*60)
 print(f"TensorFlow Version: {tf.__version__}")
 print(f"GPU Available: {len(tf.config.list_physical_devices('GPU')) > 0}")

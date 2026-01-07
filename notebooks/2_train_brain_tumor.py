@@ -1,7 +1,3 @@
-"""
-🧠 BRAIN TUMOR CLASSIFICATION MODEL TRAINING
-Run in VS Code: Right-click → Run Python File in Terminal
-"""
 
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
@@ -20,7 +16,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 print("="*60)
-print("🧠 BRAIN TUMOR CLASSIFICATION - TRAINING SCRIPT")
+print(" BRAIN TUMOR CLASSIFICATION - TRAINING SCRIPT")
 print("="*60)
 print(f"TensorFlow Version: {tf.__version__}")
 print(f"GPU Available: {len(tf.config.list_physical_devices('GPU')) > 0}")
@@ -42,13 +38,13 @@ config = Config()
 
 # Verify dataset
 if not os.path.exists(config.TRAIN_DIR):
-    print(f"❌ ERROR: Dataset not found at {config.TRAIN_DIR}")
+    print(f" ERROR: Dataset not found at {config.TRAIN_DIR}")
     exit(1)
 
 print("✅ Dataset found!")
 
 # Data Augmentation
-print("\n📊 Setting up data augmentation...")
+print("\n Setting up data augmentation...")
 train_datagen = ImageDataGenerator(
     rescale=1./255,
     rotation_range=25,
@@ -65,7 +61,7 @@ train_datagen = ImageDataGenerator(
 test_datagen = ImageDataGenerator(rescale=1./255)
 
 # Load Data
-print("📥 Loading datasets...")
+print(" Loading datasets...")
 train_generator = train_datagen.flow_from_directory(
     config.TRAIN_DIR,
     target_size=config.IMG_SIZE,
@@ -92,12 +88,12 @@ test_generator = test_datagen.flow_from_directory(
     shuffle=False
 )
 
-print(f"✅ Training samples: {train_generator.samples}")
-print(f"✅ Validation samples: {val_generator.samples}")
-print(f"✅ Test samples: {test_generator.samples}")
+print(f" Training samples: {train_generator.samples}")
+print(f" Validation samples: {val_generator.samples}")
+print(f" Test samples: {test_generator.samples}")
 
 # Build Model
-print("\n🏗️ Building model...")
+print("\n Building model...")
 base_model = EfficientNetB0(
     weights='imagenet',
     include_top=False,
@@ -122,8 +118,8 @@ model.compile(
     metrics=['accuracy', keras.metrics.Precision(), keras.metrics.Recall()]
 )
 
-print("✅ Model built successfully!")
-print(f"📊 Total parameters: {model.count_params():,}")
+print(" Model built successfully!")
+print(f" Total parameters: {model.count_params():,}")
 
 # Callbacks
 callbacks = [
@@ -133,7 +129,7 @@ callbacks = [
 ]
 
 # Train
-print("\n🚀 Starting training...")
+print("\n Starting training...")
 print("="*60)
 
 history = model.fit(
@@ -145,22 +141,22 @@ history = model.fit(
 )
 
 print("="*60)
-print("✅ Training completed!")
+print(" Training completed!")
 
 # Evaluate
-print("\n📊 Evaluating on test set...")
+print("\n Evaluating on test set...")
 test_results = model.evaluate(test_generator)
 
 print("\n" + "="*60)
-print("📈 FINAL RESULTS")
+print(" FINAL RESULTS")
 print("="*60)
-print(f"✅ Test Accuracy:  {test_results[1]*100:.2f}%")
-print(f"✅ Test Precision: {test_results[2]*100:.2f}%")
-print(f"✅ Test Recall:    {test_results[3]*100:.2f}%")
+print(f" Test Accuracy:  {test_results[1]*100:.2f}%")
+print(f" Test Precision: {test_results[2]*100:.2f}%")
+print(f" Test Recall:    {test_results[3]*100:.2f}%")
 print("="*60)
 
 # Predictions
-print("\n🔮 Generating predictions...")
+print("\n Generating predictions...")
 test_generator.reset()
 y_pred_probs = model.predict(test_generator, verbose=0)
 y_pred = np.argmax(y_pred_probs, axis=1)
@@ -168,7 +164,7 @@ y_true = test_generator.classes
 
 # Confusion Matrix
 cm = confusion_matrix(y_true, y_pred)
-print("\n📋 Classification Report:")
+print("\n Classification Report:")
 print(classification_report(y_true, y_pred, target_names=config.CLASSES))
 
 # Plot results
@@ -200,9 +196,9 @@ plt.xlabel('Predicted')
 
 plt.tight_layout()
 plt.savefig('models/brain_tumor_training_results.png', dpi=150, bbox_inches='tight')
-print("📊 Results plot saved to: models/brain_tumor_training_results.png")
+print(" Results plot saved to: models/brain_tumor_training_results.png")
 
 print("\n" + "="*60)
 print("🎉 BRAIN TUMOR MODEL TRAINING COMPLETE!")
 print("="*60)
-print("✅ Next: Run 'python notebooks/3_train_chatbot.py'")
+print(" Next: Run 'python notebooks/3_train_chatbot.py'")

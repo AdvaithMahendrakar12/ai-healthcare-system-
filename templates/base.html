@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MedDiagnose AI{% endblock %}</title>
+    
+    <!-- Google Fonts - Distinctive Medical Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ============================================
+           CSS VARIABLES - MEDICAL THEME
+           ============================================ */
+        :root {
+            /* Primary Colors - Deep Teal Medical Theme */
+            --primary-900: #0d3b3b;
+            --primary-800: #115e5e;
+            --primary-700: #147d7d;
+            --primary-600: #189a9a;
+            --primary-500: #1cb5b5;
+            --primary-400: #4fcaca;
+            --primary-300: #7ed9d9;
+            --primary-200: #b3e8e8;
+            --primary-100: #e0f5f5;
+            --primary-50: #f0fafa;
+            
+            /* Accent Colors - Warm Coral for Alerts */
+            --accent-500: #e85d5d;
+            --accent-400: #ef7c7c;
+            --accent-300: #f5a3a3;
+            --accent-600: #d44444;
+            
+            /* Success - Calm Green */
+            --success-500: #22a867;
+            --success-100: #dcf5e9;
+            
+            /* Warning - Amber */
+            --warning-500: #f59e0b;
+            --warning-100: #fef3c7;
+            
+            /* Neutrals */
+            --neutral-950: #0a0f14;
+            --neutral-900: #141d26;
+            --neutral-800: #1e2d3d;
+            --neutral-700: #2d4356;
+            --neutral-600: #4a6382;
+            --neutral-500: #6b8299;
+            --neutral-400: #94a8bd;
+            --neutral-300: #bcc9d6;
+            --neutral-200: #dfe5eb;
+            --neutral-100: #f1f4f7;
+            --neutral-50: #f8fafb;
+            
+            /* Typography */
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+            --space-3xl: 4rem;
+            
+            /* Border Radius */
+            --radius-sm: 6px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(10, 15, 20, 0.05);
+            --shadow-md: 0 4px 12px rgba(10, 15, 20, 0.08);
+            --shadow-lg: 0 12px 32px rgba(10, 15, 20, 0.12);
+            --shadow-xl: 0 24px 64px rgba(10, 15, 20, 0.16);
+            
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+            --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* ============================================
+           RESET & BASE STYLES
+           ============================================ */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: var(--font-body);
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--neutral-800);
+            background: var(--neutral-50);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* ============================================
+           BACKGROUND PATTERN
+           ============================================ */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, var(--primary-100) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, var(--primary-50) 0%, transparent 40%),
+                linear-gradient(135deg, var(--neutral-50) 0%, #ffffff 100%);
+            z-index: -1;
+        }
+        
+        /* Subtle grid pattern */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(var(--neutral-200) 1px, transparent 1px),
+                linear-gradient(90deg, var(--neutral-200) 1px, transparent 1px);
+            background-size: 60px 60px;
+            opacity: 0.3;
+            z-index: -1;
+        }
+        
+        /* ============================================
+           NAVIGATION
+           ============================================ */
+        .navbar {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--neutral-200);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: var(--space-md) var(--space-xl);
+        }
+        
+        .navbar-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            text-decoration: none;
+            color: var(--primary-800);
+        }
+        
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-800) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .logo-text {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+        
+        .logo-text span {
+            color: var(--primary-500);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: var(--space-lg);
+            list-style: none;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--neutral-600);
+            font-weight: 500;
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-fast);
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-700);
+            background: var(--primary-50);
+        }
+        
+        .nav-links a.active {
+            color: var(--primary-700);
+            background: var(--primary-100);
+        }
+        
+        /* ============================================
+           MAIN CONTENT
+           ============================================ */
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--space-2xl) var(--space-xl);
+            min-height: calc(100vh - 200px);
+        }
+        
+        /* ============================================
+           TYPOGRAPHY
+           ============================================ */
+        h1, h2, h3, h4 {
+            font-family: var(--font-display);
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+        
+        h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            color: var(--neutral-900);
+        }
+        
+        h2 {
+            font-size: clamp(1.75rem, 3vw, 2.5rem);
+            font-weight: 600;
+            color: var(--neutral-900);
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--neutral-800);
+        }
+        
+        p {
+            color: var(--neutral-600);
+        }
+        
+        /* ============================================
+           BUTTONS
+           ============================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            padding: var(--space-md) var(--space-xl);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+            color: white;
+            box-shadow: var(--shadow-md), 0 4px 12px rgba(20, 125, 125, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg), 0 8px 24px rgba(20, 125, 125, 0.35);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--primary-700);
+            border: 2px solid var(--primary-200);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--primary-400);
+            background: var(--primary-50);
+        }
+        
+        .btn-lg {
+            padding: var(--space-lg) var(--space-2xl);
+            font-size: 1.125rem;
+            border-radius: var(--radius-lg);
+        }
+        
+        /* ============================================
+           CARDS
+           ============================================ */
+        .card {
+            background: white;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--neutral-200);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            transition: all var(--transition-normal);
+        }
+        
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }
+        
+        /* ============================================
+           FORMS
+           ============================================ */
+        .form-group {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--neutral-800);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .file-upload {
+            position: relative;
+            border: 2px dashed var(--neutral-300);
+            border-radius: var(--radius-lg);
+            padding: var(--space-2xl);
+            text-align: center;
+            background: var(--neutral-50);
+            transition: all var(--transition-normal);
+            cursor: pointer;
+        }
+        
+        .file-upload:hover {
+            border-color: var(--primary-400);
+            background: var(--primary-50);
+        }
+        
+        .file-upload.dragover {
+            border-color: var(--primary-500);
+            background: var(--primary-100);
+        }
+        
+        .file-upload input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .file-upload-icon {
+            font-size: 3rem;
+            margin-bottom: var(--space-md);
+        }
+        
+        .file-upload-text {
+            color: var(--neutral-600);
+        }
+        
+        .file-upload-text strong {
+            color: var(--primary-600);
+        }
+        
+        /* ============================================
+           ALERTS / RESULT BOXES
+           ============================================ */
+        .alert {
+            padding: var(--space-lg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .alert-success {
+            background: var(--success-100);
+            border: 1px solid var(--success-500);
+            color: #166534;
+        }
+        
+        .alert-danger {
+            background: #fef2f2;
+            border: 1px solid var(--accent-500);
+            color: #991b1b;
+        }
+        
+        .alert-warning {
+            background: var(--warning-100);
+            border: 1px solid var(--warning-500);
+            color: #92400e;
+        }
+        
+        /* ============================================
+           FOOTER
+           ============================================ */
+        footer {
+            background: var(--neutral-900);
+            color: var(--neutral-400);
+            padding: var(--space-2xl) var(--space-xl);
+            margin-top: auto;
+        }
+        
+        .footer-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--space-lg);
+        }
+        
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .footer-brand .logo-icon {
+            width: 36px;
+            height: 36px;
+            font-size: 1.2rem;
+        }
+        
+        .footer-text {
+            font-size: 0.875rem;
+        }
+        
+        .footer-disclaimer {
+            font-size: 0.75rem;
+            color: var(--neutral-500);
+            max-width: 500px;
+            text-align: right;
+        }
+        
+        /* ============================================
+           ANIMATIONS
+           ============================================ */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.6;
+            }
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        
+        .animate-delay-1 { animation-delay: 0.1s; }
+        .animate-delay-2 { animation-delay: 0.2s; }
+        .animate-delay-3 { animation-delay: 0.3s; }
+        .animate-delay-4 { animation-delay: 0.4s; }
+        
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: var(--space-md);
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            main {
+                padding: var(--space-lg) var(--space-md);
+            }
+            
+            .footer-inner {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-disclaimer {
+                text-align: center;
+            }
+        }
+        
+        /* ============================================
+           UTILITIES
+           ============================================ */
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .text-right { text-align: right; }
+        
+        .mt-1 { margin-top: var(--space-md); }
+        .mt-2 { margin-top: var(--space-lg); }
+        .mt-3 { margin-top: var(--space-xl); }
+        .mt-4 { margin-top: var(--space-2xl); }
+        
+        .mb-1 { margin-bottom: var(--space-md); }
+        .mb-2 { margin-bottom: var(--space-lg); }
+        .mb-3 { margin-bottom: var(--space-xl); }
+        .mb-4 { margin-bottom: var(--space-2xl); }
+        
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .gap-1 { gap: var(--space-md); }
+        .gap-2 { gap: var(--space-lg); }
+        .gap-3 { gap: var(--space-xl); }
+    </style>
+    
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="{{ url_for('index') }}" class="logo">
+                <div class="logo-icon">🏥</div>
+                <div class="logo-text">Med<span>Diagnose</span> AI</div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">Home</a></li>
+                <li><a href="{{ url_for('diagnose', disease_type='lung_cancer') }}" class="{% if disease_type == 'lung_cancer' %}active{% endif %}">Lung Analysis</a></li>
+                <li><a href="{{ url_for('diagnose', disease_type='fetal_ultrasound') }}" class="{% if disease_type == 'fetal_ultrasound' %}active{% endif %}">Fetal Ultrasound</a></li>
+                <li><a href="{{ url_for('diagnose', disease_type='brain_hemorrhage') }}" class="{% if disease_type == 'brain_hemorrhage' %}active{% endif %}">Brain Scan</a></li>
+                <li><a href="{{ url_for('about') }}" class="{% if request.endpoint == 'about' %}active{% endif %}">About</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="logo-icon">🏥</div>
+                <div>
+                    <div class="footer-text" style="color: white; font-weight: 600;">MedDiagnose AI</div>
+                    <div class="footer-text">Advanced Medical Imaging Analysis</div>
+                </div>
+            </div>
+            <div class="footer-disclaimer">
+                ⚠️ This system is for educational and research purposes only. 
+                Always consult qualified healthcare professionals for medical diagnosis and treatment.
+            </div>
+        </div>
+    </footer>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>
+

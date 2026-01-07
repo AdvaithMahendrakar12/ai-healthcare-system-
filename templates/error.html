@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Error - MedDiagnose AI{% endblock %}
+
+{% block head %}
+<style>
+    .error-page {
+        text-align: center;
+        padding: var(--space-3xl) 0;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .error-icon {
+        font-size: 6rem;
+        margin-bottom: var(--space-xl);
+        display: block;
+        animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+        }
+        40% {
+            transform: translateY(-20px);
+        }
+        60% {
+            transform: translateY(-10px);
+        }
+    }
+    
+    .error-page h1 {
+        color: var(--accent-500);
+        margin-bottom: var(--space-lg);
+    }
+    
+    .error-page p {
+        font-size: 1.125rem;
+        margin-bottom: var(--space-2xl);
+    }
+    
+    .error-message {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: var(--radius-lg);
+        padding: var(--space-xl);
+        margin-bottom: var(--space-2xl);
+        color: #991b1b;
+    }
+    
+    .error-actions {
+        display: flex;
+        gap: var(--space-md);
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="error-page">
+    <span class="error-icon">🏥</span>
+    <h1>Oops! Something Went Wrong</h1>
+    <p>We encountered an error while processing your request.</p>
+    
+    {% if message %}
+    <div class="error-message">
+        <strong>Error Details:</strong><br>
+        {{ message }}
+    </div>
+    {% endif %}
+    
+    <div class="error-actions">
+        <a href="{{ url_for('index') }}" class="btn btn-primary">
+            ← Back to Home
+        </a>
+        <a href="javascript:history.back()" class="btn btn-secondary">
+            Try Again
+        </a>
+    </div>
+</div>
+{% endblock %}
+

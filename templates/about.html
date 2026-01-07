@@ -1,0 +1,417 @@
+{% extends "base.html" %}
+
+{% block title %}About - MedDiagnose AI{% endblock %}
+
+{% block head %}
+<style>
+    /* About Hero */
+    .about-hero {
+        text-align: center;
+        padding: var(--space-3xl) 0;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .about-hero h1 {
+        margin-bottom: var(--space-lg);
+    }
+    
+    .about-hero p {
+        font-size: 1.25rem;
+        line-height: 1.8;
+    }
+    
+    /* Mission Section */
+    .mission-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: var(--space-2xl);
+        margin-top: var(--space-3xl);
+    }
+    
+    .mission-card {
+        background: white;
+        border-radius: var(--radius-xl);
+        padding: var(--space-2xl);
+        border: 1px solid var(--neutral-200);
+        box-shadow: var(--shadow-md);
+        text-align: center;
+        transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+    }
+    
+    .mission-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
+    
+    .mission-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto var(--space-lg);
+        background: linear-gradient(135deg, var(--primary-100) 0%, var(--primary-200) 100%);
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+    }
+    
+    .mission-card h3 {
+        margin-bottom: var(--space-md);
+    }
+    
+    .mission-card p {
+        font-size: 0.9375rem;
+        line-height: 1.7;
+    }
+    
+    /* Models Section */
+    .models-section {
+        margin-top: var(--space-3xl);
+    }
+    
+    .section-header {
+        text-align: center;
+        margin-bottom: var(--space-2xl);
+    }
+    
+    .models-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: var(--space-xl);
+    }
+    
+    .model-card {
+        background: white;
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        border: 1px solid var(--neutral-200);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .model-header {
+        padding: var(--space-xl);
+        color: white;
+    }
+    
+    .model-header.lung {
+        background: linear-gradient(135deg, #1e3a5f 0%, #3d5a80 100%);
+    }
+    
+    .model-header.fetal {
+        background: linear-gradient(135deg, #6b2c5a 0%, #a55c8c 100%);
+    }
+    
+    .model-header.brain {
+        background: linear-gradient(135deg, #2d1b4e 0%, #5e3d7c 100%);
+    }
+    
+    .model-header h3 {
+        color: white;
+        font-size: 1.25rem;
+        margin-bottom: var(--space-xs);
+    }
+    
+    .model-header p {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.875rem;
+    }
+    
+    .model-body {
+        padding: var(--space-xl);
+    }
+    
+    .model-specs {
+        list-style: none;
+    }
+    
+    .model-specs li {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        padding: var(--space-sm) 0;
+        border-bottom: 1px solid var(--neutral-100);
+        font-size: 0.9375rem;
+    }
+    
+    .model-specs li:last-child {
+        border-bottom: none;
+    }
+    
+    .spec-icon {
+        color: var(--primary-500);
+    }
+    
+    .classes-list {
+        margin-top: var(--space-md);
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-sm);
+    }
+    
+    .class-tag {
+        background: var(--neutral-100);
+        color: var(--neutral-700);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8125rem;
+        font-weight: 500;
+    }
+    
+    /* Team Section */
+    .team-section {
+        margin-top: var(--space-3xl);
+        background: linear-gradient(135deg, var(--neutral-900) 0%, var(--primary-900) 100%);
+        border-radius: var(--radius-xl);
+        padding: var(--space-3xl);
+        text-align: center;
+        color: white;
+    }
+    
+    .team-section h2 {
+        color: white;
+        margin-bottom: var(--space-md);
+    }
+    
+    .team-section > p {
+        color: var(--neutral-300);
+        max-width: 600px;
+        margin: 0 auto var(--space-2xl);
+    }
+    
+    .tech-stack {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: var(--space-lg);
+    }
+    
+    .tech-item {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: var(--radius-md);
+        padding: var(--space-lg);
+        min-width: 140px;
+        transition: background var(--transition-fast);
+    }
+    
+    .tech-item:hover {
+        background: rgba(255, 255, 255, 0.15);
+    }
+    
+    .tech-item-icon {
+        font-size: 2rem;
+        margin-bottom: var(--space-sm);
+    }
+    
+    .tech-item-name {
+        font-weight: 600;
+        margin-bottom: var(--space-xs);
+    }
+    
+    .tech-item-desc {
+        font-size: 0.75rem;
+        color: var(--neutral-400);
+    }
+    
+    /* Disclaimer Section */
+    .disclaimer-section {
+        margin-top: var(--space-3xl);
+        background: var(--warning-100);
+        border: 2px solid var(--warning-500);
+        border-radius: var(--radius-xl);
+        padding: var(--space-2xl);
+    }
+    
+    .disclaimer-section h2 {
+        color: #92400e;
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        margin-bottom: var(--space-lg);
+    }
+    
+    .disclaimer-section p {
+        color: #78350f;
+        line-height: 1.8;
+        margin-bottom: var(--space-md);
+    }
+    
+    .disclaimer-section ul {
+        color: #78350f;
+        margin-left: var(--space-xl);
+        line-height: 2;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- About Hero -->
+<section class="about-hero">
+    <h1>About <span style="color: var(--primary-600);">MedDiagnose AI</span></h1>
+    <p>
+        MedDiagnose AI is an advanced medical imaging analysis platform that leverages 
+        state-of-the-art deep learning technology to assist healthcare professionals 
+        in the early detection and diagnosis of critical medical conditions.
+    </p>
+</section>
+
+<!-- Mission Section -->
+<section class="mission-section">
+    <div class="mission-card">
+        <div class="mission-icon">🎯</div>
+        <h3>Our Mission</h3>
+        <p>
+            To democratize access to advanced medical diagnostics by providing AI-powered 
+            tools that can assist healthcare providers in making faster, more accurate diagnoses.
+        </p>
+    </div>
+    
+    <div class="mission-card">
+        <div class="mission-icon">🔬</div>
+        <h3>Our Approach</h3>
+        <p>
+            We utilize transfer learning with pre-trained models like MobileNetV2, fine-tuned 
+            on validated medical imaging datasets to achieve high accuracy in disease detection.
+        </p>
+    </div>
+    
+    <div class="mission-card">
+        <div class="mission-icon">💡</div>
+        <h3>Our Vision</h3>
+        <p>
+            A future where AI-assisted diagnostics help reduce diagnostic errors, speed up 
+            treatment decisions, and improve patient outcomes across healthcare systems.
+        </p>
+    </div>
+</section>
+
+<!-- Models Section -->
+<section class="models-section">
+    <div class="section-header">
+        <h2>Our Diagnostic Models</h2>
+        <p>Each model is trained on specialized medical imaging datasets</p>
+    </div>
+    
+    <div class="models-grid">
+        <!-- Lung Model -->
+        <div class="model-card">
+            <div class="model-header lung">
+                <h3>🫁 Lung Cancer Detection</h3>
+                <p>Chest X-Ray Analysis</p>
+            </div>
+            <div class="model-body">
+                <ul class="model-specs">
+                    <li><span class="spec-icon">✓</span> Trained on chest X-ray datasets</li>
+                    <li><span class="spec-icon">✓</span> Detects pneumonia and cancer signs</li>
+                    <li><span class="spec-icon">✓</span> Input: 224x224 RGB images</li>
+                    <li><span class="spec-icon">✓</span> Binary classification model</li>
+                </ul>
+                <div class="classes-list">
+                    <span class="class-tag">Normal</span>
+                    <span class="class-tag">Pneumonia/Cancer</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Fetal Model -->
+        <div class="model-card">
+            <div class="model-header fetal">
+                <h3>👶 Fetal Ultrasound</h3>
+                <p>Prenatal Health Assessment</p>
+            </div>
+            <div class="model-body">
+                <ul class="model-specs">
+                    <li><span class="spec-icon">✓</span> Trained on fetal ultrasound data</li>
+                    <li><span class="spec-icon">✓</span> Multi-class classification</li>
+                    <li><span class="spec-icon">✓</span> Input: 224x224 grayscale images</li>
+                    <li><span class="spec-icon">✓</span> Assesses fetal development</li>
+                </ul>
+                <div class="classes-list">
+                    <span class="class-tag">Multiple Classes</span>
+                    <span class="class-tag">Development Markers</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Brain Model -->
+        <div class="model-card">
+            <div class="model-header brain">
+                <h3>🧠 Brain Tumor Detection</h3>
+                <p>MRI Scan Analysis</p>
+            </div>
+            <div class="model-body">
+                <ul class="model-specs">
+                    <li><span class="spec-icon">✓</span> Trained on brain MRI datasets</li>
+                    <li><span class="spec-icon">✓</span> 4-class tumor classification</li>
+                    <li><span class="spec-icon">✓</span> Input: 224x224 RGB images</li>
+                    <li><span class="spec-icon">✓</span> High-precision detection</li>
+                </ul>
+                <div class="classes-list">
+                    <span class="class-tag">No Tumor</span>
+                    <span class="class-tag">Glioma</span>
+                    <span class="class-tag">Meningioma</span>
+                    <span class="class-tag">Pituitary</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Technology Stack -->
+<section class="team-section">
+    <h2>Technology Stack</h2>
+    <p>Built with industry-leading frameworks and tools</p>
+    
+    <div class="tech-stack">
+        <div class="tech-item">
+            <div class="tech-item-icon">🐍</div>
+            <div class="tech-item-name">Python</div>
+            <div class="tech-item-desc">Core Language</div>
+        </div>
+        <div class="tech-item">
+            <div class="tech-item-icon">🧬</div>
+            <div class="tech-item-name">TensorFlow</div>
+            <div class="tech-item-desc">Deep Learning</div>
+        </div>
+        <div class="tech-item">
+            <div class="tech-item-icon">🔥</div>
+            <div class="tech-item-name">Keras</div>
+            <div class="tech-item-desc">Neural Networks</div>
+        </div>
+        <div class="tech-item">
+            <div class="tech-item-icon">🌐</div>
+            <div class="tech-item-name">Flask</div>
+            <div class="tech-item-desc">Web Framework</div>
+        </div>
+        <div class="tech-item">
+            <div class="tech-item-icon">📱</div>
+            <div class="tech-item-name">Flutter</div>
+            <div class="tech-item-desc">Mobile App</div>
+        </div>
+        <div class="tech-item">
+            <div class="tech-item-icon">📊</div>
+            <div class="tech-item-name">NumPy</div>
+            <div class="tech-item-desc">Data Processing</div>
+        </div>
+    </div>
+</section>
+
+<!-- Disclaimer -->
+<section class="disclaimer-section">
+    <h2>⚠️ Important Medical Disclaimer</h2>
+    <p>
+        MedDiagnose AI is designed for <strong>educational and research purposes only</strong>. 
+        This system should not be used as a substitute for professional medical advice, 
+        diagnosis, or treatment.
+    </p>
+    <p>Key points to remember:</p>
+    <ul>
+        <li>Always consult qualified healthcare professionals for medical decisions</li>
+        <li>AI predictions may have false positives or false negatives</li>
+        <li>This tool is meant to assist, not replace, clinical judgment</li>
+        <li>Results should be validated through proper medical procedures</li>
+        <li>Do not delay seeking medical attention based on AI predictions</li>
+    </ul>
+</section>
+{% endblock %}
+

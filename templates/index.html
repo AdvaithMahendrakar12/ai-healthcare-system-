@@ -1,0 +1,521 @@
+{% extends "base.html" %}
+
+{% block title %}MedDiagnose AI - Advanced Medical Imaging Analysis{% endblock %}
+
+{% block head %}
+<style>
+    /* Hero Section */
+    .hero {
+        text-align: center;
+        padding: var(--space-3xl) 0;
+        position: relative;
+    }
+    
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-sm);
+        background: var(--primary-100);
+        color: var(--primary-700);
+        padding: var(--space-sm) var(--space-md);
+        border-radius: 50px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-bottom: var(--space-lg);
+        opacity: 0;
+        animation: fadeInUp 0.6s ease forwards;
+    }
+    
+    .hero-badge::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        background: var(--primary-500);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+    
+    .hero h1 {
+        margin-bottom: var(--space-lg);
+        opacity: 0;
+        animation: fadeInUp 0.6s ease 0.1s forwards;
+    }
+    
+    .hero h1 .highlight {
+        background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-400) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.25rem;
+        color: var(--neutral-600);
+        max-width: 700px;
+        margin: 0 auto var(--space-xl);
+        line-height: 1.8;
+        opacity: 0;
+        animation: fadeInUp 0.6s ease 0.2s forwards;
+    }
+    
+    /* Stats Section */
+    .stats {
+        display: flex;
+        justify-content: center;
+        gap: var(--space-2xl);
+        margin-top: var(--space-2xl);
+        opacity: 0;
+        animation: fadeInUp 0.6s ease 0.3s forwards;
+    }
+    
+    .stat-item {
+        text-align: center;
+    }
+    
+    .stat-value {
+        font-family: var(--font-display);
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-700);
+        line-height: 1;
+    }
+    
+    .stat-label {
+        font-size: 0.875rem;
+        color: var(--neutral-500);
+        margin-top: var(--space-xs);
+    }
+    
+    /* Disease Cards Grid */
+    .section-header {
+        text-align: center;
+        margin-bottom: var(--space-2xl);
+    }
+    
+    .section-header h2 {
+        margin-bottom: var(--space-sm);
+    }
+    
+    .section-header p {
+        font-size: 1.125rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .diagnosis-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        gap: var(--space-xl);
+        margin-top: var(--space-xl);
+    }
+    
+    .diagnosis-card {
+        background: white;
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        border: 1px solid var(--neutral-200);
+        box-shadow: var(--shadow-md);
+        transition: all var(--transition-slow);
+        position: relative;
+        opacity: 0;
+        animation: fadeInUp 0.6s ease forwards;
+    }
+    
+    .diagnosis-card:nth-child(1) { animation-delay: 0.4s; }
+    .diagnosis-card:nth-child(2) { animation-delay: 0.5s; }
+    .diagnosis-card:nth-child(3) { animation-delay: 0.6s; }
+    
+    .diagnosis-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-xl);
+    }
+    
+    .card-header {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+    }
+    
+    .card-header-bg {
+        position: absolute;
+        inset: 0;
+        opacity: 0.9;
+    }
+    
+    /* Lung Cancer Card - Deep Blue Gradient */
+    .diagnosis-card.lung .card-header-bg {
+        background: linear-gradient(135deg, #1e3a5f 0%, #3d5a80 50%, #98c1d9 100%);
+    }
+    
+    /* Fetal Ultrasound Card - Warm Pink Gradient */
+    .diagnosis-card.fetal .card-header-bg {
+        background: linear-gradient(135deg, #6b2c5a 0%, #a55c8c 50%, #f4acb7 100%);
+    }
+    
+    /* Brain Card - Purple Neural Gradient */
+    .diagnosis-card.brain .card-header-bg {
+        background: linear-gradient(135deg, #2d1b4e 0%, #5e3d7c 50%, #9d7dc2 100%);
+    }
+    
+    .card-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 5rem;
+        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+        z-index: 2;
+    }
+    
+    /* Decorative patterns for each card */
+    .card-pattern {
+        position: absolute;
+        inset: 0;
+        opacity: 0.15;
+        z-index: 1;
+    }
+    
+    .lung .card-pattern {
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5C15 5 5 20 5 30s10 25 25 25 25-10 25-25S45 5 30 5zm0 40c-10 0-15-8-15-15s5-15 15-15 15 8 15 15-5 15-15 15z' fill='%23ffffff' fill-opacity='0.4'/%3E%3C/svg%3E");
+    }
+    
+    .fetal .card-pattern {
+        background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='20' r='15' fill='none' stroke='%23ffffff' stroke-width='2' stroke-opacity='0.3'/%3E%3Ccircle cx='20' cy='20' r='8' fill='%23ffffff' fill-opacity='0.2'/%3E%3C/svg%3E");
+    }
+    
+    .brain .card-pattern {
+        background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 10c-5 0-10 5-15 10-5 5-5 15 0 20s15 10 15 10 10-5 15-10 5-15 0-20-10-10-15-10z' fill='none' stroke='%23ffffff' stroke-width='1.5' stroke-opacity='0.3'/%3E%3C/svg%3E");
+    }
+    
+    .card-body {
+        padding: var(--space-xl);
+    }
+    
+    .card-title {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--neutral-900);
+        margin-bottom: var(--space-sm);
+    }
+    
+    .card-description {
+        color: var(--neutral-600);
+        font-size: 0.9375rem;
+        line-height: 1.7;
+        margin-bottom: var(--space-lg);
+    }
+    
+    .card-features {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-sm);
+        margin-bottom: var(--space-lg);
+    }
+    
+    .feature-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: var(--neutral-100);
+        color: var(--neutral-700);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.8125rem;
+        font-weight: 500;
+    }
+    
+    .card-action {
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+    
+    /* How It Works Section */
+    .how-it-works {
+        margin-top: var(--space-3xl);
+        padding: var(--space-3xl) 0;
+    }
+    
+    .steps-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--space-xl);
+        margin-top: var(--space-2xl);
+    }
+    
+    .step-card {
+        text-align: center;
+        padding: var(--space-xl);
+    }
+    
+    .step-number {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: white;
+        margin: 0 auto var(--space-lg);
+        box-shadow: var(--shadow-md), 0 4px 12px rgba(20, 125, 125, 0.3);
+    }
+    
+    .step-card h3 {
+        font-size: 1.25rem;
+        margin-bottom: var(--space-sm);
+    }
+    
+    .step-card p {
+        font-size: 0.9375rem;
+    }
+    
+    /* Technology Section */
+    .tech-section {
+        margin-top: var(--space-3xl);
+        background: linear-gradient(135deg, var(--neutral-900) 0%, var(--primary-900) 100%);
+        border-radius: var(--radius-xl);
+        padding: var(--space-3xl);
+        color: white;
+        text-align: center;
+    }
+    
+    .tech-section h2 {
+        color: white;
+        margin-bottom: var(--space-md);
+    }
+    
+    .tech-section p {
+        color: var(--neutral-300);
+        max-width: 700px;
+        margin: 0 auto var(--space-2xl);
+    }
+    
+    .tech-logos {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: var(--space-2xl);
+        flex-wrap: wrap;
+    }
+    
+    .tech-logo {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-sm);
+        opacity: 0.8;
+        transition: opacity var(--transition-fast);
+    }
+    
+    .tech-logo:hover {
+        opacity: 1;
+    }
+    
+    .tech-logo-icon {
+        width: 64px;
+        height: 64px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+    }
+    
+    .tech-logo-name {
+        font-size: 0.875rem;
+        color: var(--neutral-400);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .stats {
+            flex-direction: column;
+            gap: var(--space-lg);
+        }
+        
+        .diagnosis-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .tech-logos {
+            gap: var(--space-lg);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-badge">
+        <span>AI-Powered Medical Imaging</span>
+    </div>
+    <h1>
+        Advanced <span class="highlight">Medical Diagnosis</span><br>
+        Powered by Deep Learning
+    </h1>
+    <p class="hero-subtitle">
+        Leveraging state-of-the-art convolutional neural networks to assist healthcare professionals 
+        in early detection and diagnosis of critical medical conditions through medical imaging analysis.
+    </p>
+    
+    <div class="stats">
+        <div class="stat-item">
+            <div class="stat-value">3</div>
+            <div class="stat-label">Diagnostic Models</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">95%+</div>
+            <div class="stat-label">Accuracy Rate</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">&lt;3s</div>
+            <div class="stat-label">Analysis Time</div>
+        </div>
+    </div>
+</section>
+
+<!-- Diagnosis Options -->
+<section class="mt-4">
+    <div class="section-header">
+        <h2>Select Diagnostic Analysis</h2>
+        <p>Choose a medical imaging category to begin AI-assisted analysis</p>
+    </div>
+    
+    <div class="diagnosis-grid">
+        <!-- Lung Cancer Card -->
+        <div class="diagnosis-card lung">
+            <div class="card-header">
+                <div class="card-header-bg"></div>
+                <div class="card-pattern"></div>
+                <div class="card-icon">🫁</div>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">Lung Cancer Detection</h3>
+                <p class="card-description">
+                    Analyze chest X-ray images to detect early signs of lung cancer and pneumonia 
+                    using deep learning algorithms trained on extensive medical datasets.
+                </p>
+                <div class="card-features">
+                    <span class="feature-tag">🔬 X-Ray Analysis</span>
+                    <span class="feature-tag">⚡ Instant Results</span>
+                    <span class="feature-tag">📊 Confidence Score</span>
+                </div>
+                <a href="{{ url_for('diagnose', disease_type='lung_cancer') }}" class="btn btn-primary card-action">
+                    Start Lung Analysis →
+                </a>
+            </div>
+        </div>
+        
+        <!-- Fetal Ultrasound Card -->
+        <div class="diagnosis-card fetal">
+            <div class="card-header">
+                <div class="card-header-bg"></div>
+                <div class="card-pattern"></div>
+                <div class="card-icon">👶</div>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">Fetal Ultrasound Analysis</h3>
+                <p class="card-description">
+                    Classify fetal ultrasound images to assess prenatal health parameters and 
+                    identify potential developmental markers for early intervention.
+                </p>
+                <div class="card-features">
+                    <span class="feature-tag">🏥 Prenatal Care</span>
+                    <span class="feature-tag">🎯 Multi-Class</span>
+                    <span class="feature-tag">📈 Progress Tracking</span>
+                </div>
+                <a href="{{ url_for('diagnose', disease_type='fetal_ultrasound') }}" class="btn btn-primary card-action">
+                    Start Fetal Analysis →
+                </a>
+            </div>
+        </div>
+        
+        <!-- Brain Hemorrhage Card -->
+        <div class="diagnosis-card brain">
+            <div class="card-header">
+                <div class="card-header-bg"></div>
+                <div class="card-pattern"></div>
+                <div class="card-icon">🧠</div>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">Brain Tumor Detection</h3>
+                <p class="card-description">
+                    Examine brain MRI scans to detect and classify tumors including gliomas, 
+                    meningiomas, and pituitary tumors with high precision neural networks.
+                </p>
+                <div class="card-features">
+                    <span class="feature-tag">🔍 MRI Analysis</span>
+                    <span class="feature-tag">🏷️ Tumor Classification</span>
+                    <span class="feature-tag">🎨 Visual Mapping</span>
+                </div>
+                <a href="{{ url_for('diagnose', disease_type='brain_hemorrhage') }}" class="btn btn-primary card-action">
+                    Start Brain Scan →
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="how-it-works">
+    <div class="section-header">
+        <h2>How It Works</h2>
+        <p>Simple three-step process for AI-assisted medical diagnosis</p>
+    </div>
+    
+    <div class="steps-grid">
+        <div class="step-card">
+            <div class="step-number">1</div>
+            <h3>Upload Image</h3>
+            <p>Select and upload your medical scan image (X-ray, ultrasound, or MRI) in JPG or PNG format.</p>
+        </div>
+        
+        <div class="step-card">
+            <div class="step-number">2</div>
+            <h3>AI Analysis</h3>
+            <p>Our deep learning models process the image through multiple neural network layers for analysis.</p>
+        </div>
+        
+        <div class="step-card">
+            <div class="step-number">3</div>
+            <h3>Get Results</h3>
+            <p>Receive instant diagnostic predictions with confidence scores and detailed classification.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Technology Section -->
+<section class="tech-section">
+    <h2>Built with Advanced Technology</h2>
+    <p>
+        Powered by state-of-the-art deep learning frameworks and trained on validated medical imaging datasets
+    </p>
+    
+    <div class="tech-logos">
+        <div class="tech-logo">
+            <div class="tech-logo-icon">🐍</div>
+            <span class="tech-logo-name">Python</span>
+        </div>
+        <div class="tech-logo">
+            <div class="tech-logo-icon">🧬</div>
+            <span class="tech-logo-name">TensorFlow</span>
+        </div>
+        <div class="tech-logo">
+            <div class="tech-logo-icon">🔥</div>
+            <span class="tech-logo-name">Keras</span>
+        </div>
+        <div class="tech-logo">
+            <div class="tech-logo-icon">🌐</div>
+            <span class="tech-logo-name">Flask</span>
+        </div>
+       
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnose {{ disease_name }} - Medical AI</title>
+    <!-- Modern Font: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Main Header -->
+        <header class="app-header">
+            <div class="header-nav">
+                <div class="logo-header">
+                    <a href="{{ url_for('index') }}">
+                        <h1>MedAI</h1>
+                        <span>Diagnostic System</span>
+                    </a>
+                </div>
+                <div class="header-links">
+                    <a href="{{ url_for('chat_page', topic=disease_type) }}" class="back-link"
+                        style="color: var(--text-muted); text-decoration: none; font-weight: 500; margin-right: 12px;">Ask Assistant</a>
+                    <a href="{{ url_for('index') }}" class="back-link"
+                        style="color: var(--text-muted); text-decoration: none; font-weight: 500;">← Back to Hub</a>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="diagnosis-header">
+                <h2>{{ disease_name }}</h2>
+                <p>{{ config.description }}</p>
+            </div>
+
+            <div class="workspace-grid">
+                <!-- Upload Panel -->
+                <div class="upload-panel glass-panel">
+                    <form method="POST" enctype="multipart/form-data" id="upload-form">
+                        <label class="upload-zone" id="drop-zone">
+                            <input type="file" name="file" id="file-input" accept="image/*" required>
+                            <div class="upload-icon">📸</div>
+                            <div class="upload-prompt" id="upload-prompt-text">Click or Drag Image Here</div>
+                            <div class="upload-subtext">Supports PNG, JPG, JPEG, GIF up to 16MB</div>
+                        </label>
+                        <button type="submit" class="submit-btn" id="submit-btn">
+                            <span class="btn-text">Analyze Upload</span>
+                            <div class="btn-loader"></div>
+                        </button>
+                    </form>
+
+                    {% if error %}
+                    <div class="error-box" style="margin-top: 20px;">
+                        ⚠️ {{ error }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Results Panel -->
+                <div class="results-panel glass-panel">
+                    {% if not result %}
+                    <!-- Empty State -->
+                    <div class="empty-state">
+                        <div class="empty-icon">📊</div>
+                        <h3>Awaiting Analysis</h3>
+                        <p>Upload a medical image to view diagnostic results here.</p>
+                    </div>
+                    {% else %}
+                    <!-- Populated Results -->
+                    <div class="result-view">
+                        <div class="result-header">
+                            <h3>Diagnostic Report</h3>
+                            <div class="confidence-score">
+                                <div class="confidence-perc">{{ "%.1f"|format(result.confidence) }}%</div>
+                                <div class="confidence-label">Confidence Score</div>
+                            </div>
+                        </div>
+
+                        <!-- Prediction Alert -->
+                        <div
+                            class="prediction-alert {% if result.is_critical %}is-critical{% else %}is-normal{% endif %}">
+                            {% if result.is_critical %}
+                            <span>⚠️</span>
+                            {% else %}
+                            <span>✅</span>
+                            {% endif %}
+                            <span>Primary Finding: {{ result.label }}</span>
+                        </div>
+
+                        <!-- Image Display -->
+                        <div class="images-display">
+                            {% if image_filename %}
+                            <div class="image-box">
+                                <img src="{{ url_for('static', filename='uploads/' + image_filename) }}"
+                                    alt="Original Upload">
+                                <div class="image-label">Original Scan</div>
+                            </div>
+                            {% endif %}
+                            {% if result.segmentation_overlay %}
+                            <div class="image-box" style="border: 2px solid #10b981;">
+                                <img src="{{ url_for('static', filename='results/' + result.segmentation_overlay) }}"
+                                    alt="Segmentation Overlay">
+                                <div class="image-label" style="background: var(--success-gradient);">AI Detection Mask
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Classification Breakdown -->
+                        {% if result.model_type == 'classification' %}
+                        <div class="breakdown-section">
+                            <h4>Class Probability Breakdown</h4>
+                            <div class="breakdown-list">
+                                {% for pred in result.all_predictions %}
+                                <div class="breakdown-row">
+                                    <div class="bd-label">{{ pred.label }}</div>
+                                    <div class="bd-bar">
+                                        {% set bar_bg = "var(--text-light)" %}
+                                        {% if loop.index0 == 0 %}
+                                        {% if result.is_critical %}
+                                        {% set bar_bg = "var(--accent-gradient)" %}
+                                        {% else %}
+                                        {% set bar_bg = "var(--success-gradient)" %}
+                                        {% endif %}
+                                        {% endif %}
+                                        <div class="bd-fill"
+                                            style="width: {{ pred.confidence }}%; background: {{ bar_bg|safe }};"></div>
+                                    </div>
+                                    <div class="bd-val">{{ "%.1f"|format(pred.confidence) }}%</div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div style="margin-top: 18px;">
+                            <a href="{{ url_for('chat_page', topic=disease_type) }}" class="submit-btn"
+                                style="display: inline-flex; width: auto; padding: 10px 16px; text-decoration: none;">
+                                Ask Follow-up in Local Chat
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- How It Works & Testing Guide Section -->
+            <div class="info-section">
+                <div class="info-header">
+                    <h3>How It Works & Testing Guide</h3>
+                </div>
+
+                <div class="info-grid">
+                    <!-- Architecture / Engine Card -->
+                    <div class="info-card">
+                        <h4>⚙️ AI Architecture</h4>
+                        {% if disease_type == 'pneumonia' %}
+                        <p>This model utilizes an <strong>EfficientNetB3</strong> Convolutional Neural Network (CNN),
+                            pre-trained on ImageNet and fine-tuned on a dataset of over 5,800 pediatric chest X-rays. It
+                            employs a custom classification head to distinguish between normal lungs and those showing
+                            signs of viral or bacterial pneumonia.</p>
+                        <div class="tech-badge-container">
+                            <span class="tech-badge">EfficientNetB3</span>
+                            <span class="tech-badge">Binary Classification</span>
+                            <span class="tech-badge">TensorFlow</span>
+                        </div>
+                        {% elif disease_type == 'brain_tumor' %}
+                        <p>This prediction engine runs on an <strong>EfficientNetV2S</strong> backbone featuring a novel
+                            Dual Pooling Strategy. Trained on high-quality MRI scans across 4 distinct classes, it
+                            extracts multiple feature representations to accurately classify brain tumors with extremely
+                            high precision.</p>
+                        <div class="tech-badge-container">
+                            <span class="tech-badge">EfficientNetV2S</span>
+                            <span class="tech-badge">Dual Pooling</span>
+                            <span class="tech-badge">4-Class Output</span>
+                        </div>
+                        {% elif disease_type == 'fetal_ultrasound' %}
+                        <p>Powered by a <strong>U-Net</strong> architecture tailored specifically for semantic
+                            segmentation in medical imaging. The encoder-decoder network uses skip connections to
+                            preserve fine-grained spatial information, allowing it to predict a pixel-perfect binary
+                            mask outlining the fetal head contour.</p>
+                        <div class="tech-badge-container">
+                            <span class="tech-badge">U-Net Architecture</span>
+                            <span class="tech-badge">Semantic Segmentation</span>
+                            <span class="tech-badge">Image Masking</span>
+                        </div>
+                        {% else %}
+                        <p>Our ensemble of specialized Deep Learning models analyze patient data to assist clinicians in
+                            diagnostics.</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Step-by-Step Test Guide -->
+                    <div class="info-card">
+                        <h4>🧪 Testing Guide</h4>
+                        {% if disease_type == 'pneumonia' %}
+                        <ol class="step-list">
+                            <li><span class="step-number">1</span><strong>Ensure Image Format:</strong> Download a
+                                sample chest X-ray image (.jpeg, .png).</li>
+                            <li><span class="step-number">2</span><strong>Upload:</strong> Click the upload zone above
+                                or drag and drop your X-ray file.</li>
+                            <li><span class="step-number">3</span><strong>Analyze:</strong> Click the "Analyze Upload"
+                                button and wait for processing.</li>
+                            <li><span class="step-number">4</span><strong>Review:</strong> Check the resulting
+                                Confidence Score and Primary Finding (Normal vs Pneumonia).</li>
+                        </ol>
+                        {% elif disease_type == 'brain_tumor' %}
+                        <ol class="step-list">
+                            <li><span class="step-number">1</span><strong>Locate Scan:</strong> Prepare a single-slice
+                                Brain MRI scan (T1, T2, or FLAIR).</li>
+                            <li><span class="step-number">2</span><strong>Upload:</strong> Select or drop your image
+                                into the drop zone area.</li>
+                            <li><span class="step-number">3</span><strong>Submit:</strong> Run the model by hitting
+                                "Analyze Upload".</li>
+                            <li><span class="step-number">4</span><strong>Inspect Results:</strong> Review the primary
+                                prediction and the full probability breakdown across Glioma, Meningioma, Pituitary, and
+                                No Tumor classes.</li>
+                        </ol>
+                        {% elif disease_type == 'fetal_ultrasound' %}
+                        <ol class="step-list">
+                            <li><span class="step-number">1</span><strong>Obtain Ultrasound:</strong> Use a standard 2D
+                                fetal ultrasound image.</li>
+                            <li><span class="step-number">2</span><strong>Upload File:</strong> Drop the image file into
+                                the designated upload area.</li>
+                            <li><span class="step-number">3</span><strong>Generate Mask:</strong> Click "Analyze Upload"
+                                to trigger semantic segmentation.</li>
+                            <li><span class="step-number">4</span><strong>Examine Mask:</strong> View the results panel.
+                                An overlay of the AI-detected fetal head boundary should appear on the scan.</li>
+                        </ol>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer>
+            <p>&copy; 2026 Medical AI Diagnostic System. Not intended for clinical use without human supervision.</p>
+        </footer>
+    </div>
+
+    <!-- Enhanced JS for UX with Image Preview -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropZone = document.getElementById('drop-zone');
+            const fileInput = document.getElementById('file-input');
+            const promptText = document.getElementById('upload-prompt-text');
+            const uploadSubtext = dropZone.querySelector('.upload-subtext');
+            const uploadIcon = dropZone.querySelector('.upload-icon');
+            const form = document.getElementById('upload-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const uploadPanel = dropZone.closest('.upload-panel');
+
+            let previewContainer = null;
+
+            function formatFileSize(bytes) {
+                if (bytes < 1024) return bytes + ' B';
+                if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+                return (bytes / 1048576).toFixed(1) + ' MB';
+            }
+
+            function showPreview(file) {
+                // Remove old preview if any
+                removePreview();
+
+                if (!file || !file.type.startsWith('image/')) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewContainer = document.createElement('div');
+                    previewContainer.className = 'image-preview-container';
+                    previewContainer.innerHTML = `
+                        <div class="image-preview-wrapper">
+                            <img src="${e.target.result}" alt="Upload Preview">
+                        </div>
+                        <div class="preview-label">
+                            <span class="file-name" title="${file.name}">${file.name}</span>
+                            <span class="file-size">${formatFileSize(file.size)}</span>
+                            <button type="button" class="remove-preview-btn">Remove</button>
+                        </div>
+                    `;
+
+                    // Insert after the upload zone label, before the submit button
+                    const submitBtnEl = uploadPanel.querySelector('.submit-btn');
+                    form.insertBefore(previewContainer, submitBtnEl);
+
+                    // Remove button handler
+                    previewContainer.querySelector('.remove-preview-btn').addEventListener('click', (ev) => {
+                        ev.preventDefault();
+                        ev.stopPropagation();
+                        resetUpload();
+                    });
+
+                    // Update upload zone state
+                    dropZone.classList.add('has-file');
+                    promptText.textContent = 'Image ready for analysis';
+                    promptText.style.color = '#6366f1';
+                    uploadIcon.textContent = '✅';
+                    uploadSubtext.style.opacity = '0';
+                };
+                reader.readAsDataURL(file);
+            }
+
+            function removePreview() {
+                if (previewContainer && previewContainer.parentNode) {
+                    previewContainer.remove();
+                    previewContainer = null;
+                }
+            }
+
+            function resetUpload() {
+                removePreview();
+                fileInput.value = '';
+                dropZone.classList.remove('has-file');
+                promptText.textContent = 'Click or Drag Image Here';
+                promptText.style.color = '';
+                uploadIcon.textContent = '📸';
+                uploadSubtext.style.opacity = '1';
+            }
+
+            // Drag and drop
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+
+            ['dragleave', 'dragend'].forEach(evt => {
+                dropZone.addEventListener(evt, (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('dragover');
+                });
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                if (e.dataTransfer.files.length > 0) {
+                    fileInput.files = e.dataTransfer.files;
+                    showPreview(e.dataTransfer.files[0]);
+                }
+            });
+
+            // File selection via click
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    showPreview(e.target.files[0]);
+                }
+            });
+
+            // Loading state on submit
+            form.addEventListener('submit', () => {
+                if (fileInput.files.length > 0) {
+                    submitBtn.classList.add('loading');
+                    submitBtn.disabled = true;
+                }
+            });
+
+            // Animate results bars if present
+            document.querySelectorAll('.bd-fill').forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => { bar.style.width = width; }, 400);
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,563 @@
+{
+    "intents": [
+        {
+            "tag": "greeting",
+            "patterns": [
+                "Hi",
+                "Hello",
+                "Hey",
+                "How are you",
+                "Good morning",
+                "Good evening",
+                "Whats up",
+                "Howdy",
+                "Hi there",
+                "Hello there",
+                "Good afternoon",
+                "Hey there",
+                "Greetings",
+                "What's good",
+                "Hi bot",
+                "Hello bot",
+                "Hey bot",
+                "Good day",
+                "Hi doctor",
+                "Hello doctor"
+            ],
+            "responses": [
+                "Hello! I'm HealthBot. How can I assist you today?",
+                "Hi there! I'm here to help with your health questions.",
+                "Hey! What health concern can I help you with?"
+            ]
+        },
+        {
+            "tag": "goodbye",
+            "patterns": [
+                "Bye",
+                "See you",
+                "Goodbye",
+                "Take care",
+                "Exit",
+                "Quit",
+                "See you later",
+                "Farewell",
+                "I'm done",
+                "That's all",
+                "Thanks bye",
+                "Good night",
+                "I'll go now",
+                "Catch you later",
+                "Talk later",
+                "I'm leaving",
+                "Done for now",
+                "Bye bye",
+                "See ya",
+                "Later"
+            ],
+            "responses": [
+                "Take care! Stay healthy!",
+                "Goodbye! Remember to stay hydrated and eat well!",
+                "Bye! Don't forget your daily exercise!"
+            ]
+        },
+        {
+            "tag": "fever",
+            "patterns": [
+                "I have fever",
+                "My temperature is high",
+                "I feel hot",
+                "I have high temperature",
+                "body is burning",
+                "chills and fever",
+                "running a fever",
+                "temperature 101",
+                "temperature 102",
+                "feeling feverish",
+                "I feel warm",
+                "my forehead is hot",
+                "I have been sweating a lot",
+                "fever since yesterday",
+                "fever won't go down",
+                "my body temperature is elevated",
+                "I feel feverish and weak",
+                "slight fever",
+                "high grade fever",
+                "I am shivering and hot",
+                "I have chills",
+                "sweating with fever",
+                "temperature is 103",
+                "body heat is high"
+            ],
+            "responses": [
+                "For fever: Rest and stay hydrated. Take paracetamol if above 38.5°C/101.3°F. Seek medical attention if fever exceeds 39.5°C/103°F or lasts more than 3 days. ⚠️ Please consult a doctor."
+            ]
+        },
+        {
+            "tag": "headache",
+            "patterns": [
+                "I have headache",
+                "my head hurts",
+                "head pain",
+                "migraine",
+                "throbbing head",
+                "head is pounding",
+                "I have a headache",
+                "head is killing me",
+                "terrible headache",
+                "splitting headache",
+                "pressure in my head",
+                "forehead pain",
+                "temple pain",
+                "back of head pain",
+                "headache for days",
+                "chronic headache",
+                "I get headaches often",
+                "headache with nausea",
+                "headache and dizziness",
+                "head feels heavy",
+                "migraine attack",
+                "cluster headache",
+                "tension headache",
+                "headache since morning"
+            ],
+            "responses": [
+                "For headaches: Rest in a quiet dark room. Apply a cold or warm compress. Stay hydrated. OTC pain relievers may help. If severe or frequent, consult a doctor. ⚠️ Always seek professional medical advice."
+            ]
+        },
+        {
+            "tag": "cold",
+            "patterns": [
+                "I have cold",
+                "runny nose",
+                "sneezing",
+                "common cold",
+                "stuffy nose",
+                "nasal congestion",
+                "sore throat and runny nose",
+                "I caught a cold",
+                "blocked nose",
+                "nose is running",
+                "constant sneezing",
+                "cold and cough",
+                "seasonal cold",
+                "I feel like I have a cold",
+                "sneezing all day",
+                "nose won't stop running",
+                "cold symptoms",
+                "got a cold",
+                "I am sneezing a lot",
+                "cold since two days",
+                "watery eyes and runny nose",
+                "feeling under the weather",
+                "post nasal drip",
+                "nose dripping"
+            ],
+            "responses": [
+                "For common cold: Rest, stay warm and hydrated. Honey lemon tea soothes the throat. Most colds resolve in 7-10 days. See a doctor if symptoms worsen. ⚠️ Consult a healthcare professional for personalized advice."
+            ]
+        },
+        {
+            "tag": "cough",
+            "patterns": [
+                "I have cough",
+                "coughing",
+                "dry cough",
+                "wet cough",
+                "cough with phlegm",
+                "persistent cough",
+                "chest cough",
+                "I keep coughing",
+                "cough all day",
+                "coughing blood",
+                "cough with mucus",
+                "irritating cough",
+                "cough won't stop",
+                "I've been coughing for weeks",
+                "night cough",
+                "morning cough",
+                "coughing fits",
+                "barking cough",
+                "tickle in throat causing cough",
+                "productive cough",
+                "cough and cold",
+                "cough after cold",
+                "cough with fever",
+                "smokers cough"
+            ],
+            "responses": [
+                "For cough: Stay hydrated, try honey in warm water. Avoid irritants. If cough persists >3 weeks, produces blood, or causes chest pain, seek immediate medical attention. ⚠️ Consult a doctor."
+            ]
+        },
+        {
+            "tag": "stomachache",
+            "patterns": [
+                "stomach pain",
+                "stomach ache",
+                "abdominal pain",
+                "belly hurts",
+                "stomach cramps",
+                "I have stomach ache",
+                "tummy ache",
+                "my stomach hurts",
+                "abdomen pain",
+                "stomach is hurting",
+                "pain in my belly",
+                "lower abdomen pain",
+                "upper stomach pain",
+                "stomach pain after eating",
+                "stomach pain at night",
+                "cramps in stomach",
+                "stomach is cramping",
+                "gastric pain",
+                "pain in gut",
+                "bloating and pain",
+                "stomach feels tight",
+                "indigestion pain",
+                "stomach upset and pain"
+            ],
+            "responses": [
+                "For stomach pain: Rest, avoid solid foods temporarily. Ginger or peppermint tea can soothe. Avoid spicy foods. If pain is severe, persistent, or with fever/vomiting, seek medical attention. ⚠️ Consult a doctor."
+            ]
+        },
+        {
+            "tag": "diabetes",
+            "patterns": [
+                "diabetes",
+                "high blood sugar",
+                "blood sugar high",
+                "sugar disease",
+                "glucose level high",
+                "Type 2 diabetes",
+                "diabetic",
+                "I have diabetes",
+                "my sugar is high",
+                "sugar levels are elevated",
+                "blood glucose is high",
+                "I am diabetic",
+                "Type 1 diabetes",
+                "sugar control problem",
+                "insulin problem",
+                "glucose problem",
+                "hyperglycemia",
+                "fasting sugar is high",
+                "post meal sugar high",
+                "my HbA1c is high",
+                "diabetes management",
+                "diabetes diet",
+                "diabetes exercise",
+                "blood sugar control"
+            ],
+            "responses": [
+                "Diabetes management: Monitor blood glucose regularly. Follow a low-sugar diet. Exercise daily. Take prescribed medications consistently. Regular check-ups are vital. ⚠️ Diabetes requires ongoing medical supervision — please consult your doctor."
+            ]
+        },
+        {
+            "tag": "blood_pressure",
+            "patterns": [
+                "high blood pressure",
+                "hypertension",
+                "BP is high",
+                "blood pressure problem",
+                "low blood pressure",
+                "hypotension",
+                "my BP is 140/90",
+                "my blood pressure is elevated",
+                "I have hypertension",
+                "BP keeps going up",
+                "blood pressure fluctuating",
+                "BP not under control",
+                "I feel dizzy low BP",
+                "BP is 180/110",
+                "heart rate and BP",
+                "I take BP medicine",
+                "blood pressure monitoring",
+                "high BP symptoms",
+                "BP headache",
+                "BP medication",
+                "blood pressure diet",
+                "salt and blood pressure",
+                "blood pressure stress",
+                "morning BP high"
+            ],
+            "responses": [
+                "For blood pressure: Reduce salt, exercise regularly, manage stress, avoid alcohol and smoking. Monitor BP regularly. Take prescribed medications consistently. ⚠️ Please consult your doctor or cardiologist."
+            ]
+        },
+        {
+            "tag": "anxiety",
+            "patterns": [
+                "I feel anxious",
+                "anxiety",
+                "panic attack",
+                "feeling stressed",
+                "nervous all the time",
+                "constant worry",
+                "anxiety disorder",
+                "I am anxious",
+                "I feel panicky",
+                "heart racing with anxiety",
+                "anxiety and stress",
+                "I have panic attacks",
+                "feeling on edge",
+                "overthinking everything",
+                "social anxiety",
+                "I cannot relax",
+                "fear and anxiety",
+                "generalised anxiety",
+                "anxiety in public",
+                "performance anxiety",
+                "I worry too much",
+                "anxiety before exams",
+                "anxiety at work",
+                "chronic anxiety"
+            ],
+            "responses": [
+                "For anxiety: Practice deep breathing and mindfulness. Regular exercise helps. Limit caffeine. Talk to a trusted person or therapist. ⚠️ If anxiety significantly impacts your life, please reach out to a mental health professional."
+            ]
+        },
+        {
+            "tag": "depression",
+            "patterns": [
+                "I feel depressed",
+                "depression",
+                "feeling sad all the time",
+                "no motivation",
+                "feeling hopeless",
+                "mental health issues",
+                "feeling empty",
+                "I am depressed",
+                "I feel worthless",
+                "nothing makes me happy",
+                "I lost interest in everything",
+                "feeling low all the time",
+                "I cry for no reason",
+                "I don't want to do anything",
+                "major depression",
+                "clinical depression",
+                "I feel like giving up",
+                "feeling isolated and depressed",
+                "mood is always low",
+                "I sleep all day and feel sad",
+                "depression and anxiety",
+                "I can't enjoy anything",
+                "depressive episodes"
+            ],
+            "responses": [
+                "I'm sorry you're feeling this way. Depression is real and treatable. Reach out to a mental health professional. Stay connected with loved ones. 💙 You're not alone — please contact a mental health helpline or doctor."
+            ]
+        },
+        {
+            "tag": "sleep",
+            "patterns": [
+                "can't sleep",
+                "insomnia",
+                "sleep problems",
+                "not sleeping well",
+                "trouble sleeping",
+                "waking up at night",
+                "sleep disorder",
+                "I cannot fall asleep",
+                "I keep waking up",
+                "poor sleep quality",
+                "I sleep too much",
+                "sleep apnea",
+                "restless at night",
+                "I lie awake all night",
+                "I feel tired even after sleeping",
+                "nightmares waking me up",
+                "I need help with sleep",
+                "chronic insomnia",
+                "I sleep only 3 hours",
+                "difficulty sleeping",
+                "sleep disturbance",
+                "not getting enough sleep",
+                "exhausted but can't sleep",
+                "sleep and anxiety"
+            ],
+            "responses": [
+                "For better sleep: Keep a consistent schedule. Avoid screens 1 hour before bed. Keep bedroom cool and dark. Limit caffeine after noon. Try relaxation techniques. If chronic (>1 month), see a doctor. ⚠️ Seek help for persistent sleep disorders."
+            ]
+        },
+        {
+            "tag": "allergy",
+            "patterns": [
+                "allergy",
+                "allergic reaction",
+                "skin rash",
+                "itching",
+                "hives",
+                "sneezing allergy",
+                "food allergy",
+                "dust allergy",
+                "I am allergic",
+                "I have a rash",
+                "skin is itching",
+                "pollen allergy",
+                "allergic rhinitis",
+                "seasonal allergy",
+                "I break out in hives",
+                "allergic to peanuts",
+                "allergic to dairy",
+                "allergic to dust mites",
+                "eye allergy",
+                "allergic conjunctivitis",
+                "I have eczema",
+                "allergy symptoms",
+                "my skin reacts to",
+                "medication allergy"
+            ],
+            "responses": [
+                "For allergies: Identify and avoid triggers. Antihistamines relieve mild symptoms. For skin allergies, cool compresses help. ⚠️ Severe allergic reactions (anaphylaxis) are emergencies — use EpiPen if available and call emergency services immediately."
+            ]
+        },
+        {
+            "tag": "diet_advice",
+            "patterns": [
+                "healthy diet",
+                "what should I eat",
+                "nutrition advice",
+                "food recommendation",
+                "healthy food",
+                "diet plan",
+                "balanced diet",
+                "what foods are good",
+                "weight loss diet",
+                "healthy eating tips",
+                "good nutrition",
+                "diet for health",
+                "foods to eat",
+                "foods to avoid",
+                "healthy meal plan",
+                "nutrition for energy",
+                "eating habits",
+                "clean eating",
+                "Mediterranean diet",
+                "plant based diet",
+                "diet for diabetes",
+                "diet for BP",
+                "foods rich in vitamins",
+                "protein rich foods"
+            ],
+            "responses": [
+                "A balanced diet includes: plenty of fruits and vegetables, whole grains, lean proteins, healthy fats (nuts, avocado, olive oil), and lots of water. Limit processed foods, sugar, and salt. ⚠️ For personalized nutrition advice, consult a registered dietitian."
+            ]
+        },
+        {
+            "tag": "exercise",
+            "patterns": [
+                "exercise advice",
+                "how much exercise",
+                "workout tips",
+                "physical activity",
+                "should I exercise",
+                "exercise for health",
+                "what exercise should I do",
+                "gym or home workout",
+                "exercise for weight loss",
+                "cardio advice",
+                "strength training",
+                "exercise for diabetes",
+                "exercise for blood pressure",
+                "exercise for depression",
+                "daily exercise routine",
+                "how often should I work out",
+                "beginner exercise",
+                "exercise for seniors",
+                "yoga benefits",
+                "walking for health",
+                "exercise and diet",
+                "fitness tips",
+                "how to stay fit"
+            ],
+            "responses": [
+                "WHO recommends 150-300 mins of moderate aerobic activity per week, plus strength training 2+ days. Start slow and increase gradually. Listen to your body. ⚠️ Consult a doctor before new exercise programs, especially if you have health conditions."
+            ]
+        },
+        {
+            "tag": "emergency",
+            "patterns": [
+                "emergency",
+                "heart attack",
+                "chest pain",
+                "can't breathe",
+                "stroke",
+                "unconscious",
+                "severe bleeding",
+                "call ambulance",
+                "I think I'm having a heart attack",
+                "I can't breathe",
+                "someone collapsed",
+                "sudden chest tightness",
+                "crushing chest pain",
+                "signs of stroke",
+                "face drooping stroke",
+                "arm weakness stroke",
+                "someone is unresponsive",
+                "overdose",
+                "poisoning",
+                "severe allergic reaction",
+                "anaphylaxis",
+                "I feel like I'm dying",
+                "heart is racing dangerously",
+                "I need an ambulance"
+            ],
+            "responses": [
+                "🚨 EMERGENCY: Call your local emergency number (911/112/102) IMMEDIATELY. Do not wait. I am an AI and cannot help in emergencies — please call for help NOW."
+            ]
+        },
+        {
+            "tag": "thanks",
+            "patterns": [
+                "thank you",
+                "thanks",
+                "appreciate it",
+                "helpful",
+                "great help",
+                "thank you so much",
+                "thanks a lot",
+                "very helpful",
+                "that helped",
+                "you are helpful",
+                "good information",
+                "thanks for the info",
+                "much appreciated",
+                "cheers",
+                "thanks bot",
+                "thanks doctor",
+                "nice information"
+            ],
+            "responses": [
+                "You're welcome! Stay healthy! 😊",
+                "Happy to help! Always consult a doctor for serious concerns.",
+                "Glad I could assist! Take care of yourself! 💙"
+            ]
+        },
+        {
+            "tag": "about",
+            "patterns": [
+                "what are you",
+                "who are you",
+                "what can you do",
+                "help",
+                "what is this",
+                "tell me about yourself",
+                "are you a doctor",
+                "are you a real doctor",
+                "are you AI",
+                "are you a bot",
+                "how do you work",
+                "what is healthbot",
+                "can you diagnose me",
+                "can you help with health",
+                "what topics do you cover",
+                "what health questions can I ask",
+                "your capabilities",
+                "are you trained on medical data",
+                "how accurate are you"
+            ],
+            "responses": [
+                "I'm HealthBot 🏥 — an AI health assistant. I provide general information about symptoms, diseases, diet, and wellness. ⚠️ I am NOT a substitute for professional medical advice. Always consult a qualified healthcare provider for diagnosis and treatment."
+            ]
+        }
+    ]
+}

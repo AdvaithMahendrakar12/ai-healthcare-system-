@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - Medical AI Diagnostic System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <h1><a href="{{ url_for('index') }}">Medical AI Diagnostic System</a></h1>
+    </header>
+    <main>
+        <h2>An Error Occurred</h2>
+        <p>{{ message }}</p>
+        <a href="{{ url_for('index') }}">Return to Homepage</a>
+    </main>
+    <footer>
+        <p>&copy; 2026 Medical AI Diagnostic System</p>
+    </footer>
+</body>
+</html>

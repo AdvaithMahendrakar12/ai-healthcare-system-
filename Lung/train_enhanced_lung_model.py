@@ -948,6 +948,30 @@ def main():
     with open(metadata_path, 'w') as f:
         json.dump(metadata, f, indent=2)
     print(f"✅ Saved metadata: {metadata_path}")
+
+    # Save standardized training contract for app config synchronization
+    contract = {
+        "disease_type": "pneumonia",
+        "model_path": final_model_path,
+        "model_type": "classification",
+        "img_size": Config.IMG_SIZE[0],
+        "labels": ["NORMAL", "PNEUMONIA"],
+        "labels_path": None,
+        "architecture": Config.BASE_MODEL,
+        "description": "Analyzes chest X-ray images to detect pneumonia using transfer-learned EfficientNet.",
+        "metrics": {
+            "accuracy": float(metrics['accuracy']),
+            "auc": float(metrics['auc']),
+            "precision": float(metrics['precision']),
+            "recall": float(metrics['sensitivity']),
+            "f1_score": float(metrics['f1_score']),
+        },
+        "created_at": datetime.now().isoformat()
+    }
+    contract_path = f'{Config.MODEL_DIR}/contract_latest.json'
+    with open(contract_path, 'w') as f:
+        json.dump(contract, f, indent=2)
+    print(f"✅ Saved training contract: {contract_path}")
     
     # Final summary
     print("\n" + "="*80)
@@ -968,7 +992,8 @@ def main():
     print(f"   Models:")
     print(f"      ├── {Config.MODEL_DIR}/lung_model.h5")
     print(f"      ├── {final_model_path}")
-    print(f"      └── {metadata_path}")
+    print(f"      ├── {metadata_path}")
+    print(f"      └── {contract_path}")
     print(f"   Reports:")
     print(f"      ├── {Config.REPORTS_DIR}/classification_report.txt")
     print(f"      ├── {Config.REPORTS_DIR}/dataset_analysis.csv")

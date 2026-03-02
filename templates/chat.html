@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Medical Chat - MedAI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <header class="app-header">
+            <div class="header-nav">
+                <div class="logo-header">
+                    <a href="{{ url_for('index') }}">
+                        <h1>MedAI</h1>
+                        <span>Diagnostic System</span>
+                    </a>
+                </div>
+                <a href="{{ url_for('index') }}" class="back-link"
+                    style="color: var(--text-muted); text-decoration: none; font-weight: 500;">← Back to Hub</a>
+            </div>
+        </header>
+
+        <main>
+            <div class="diagnosis-header" style="margin-bottom: 28px;">
+                <h2>Local Medical Chat</h2>
+                <p>Ask general healthcare and medical questions.</p>
+            </div>
+
+            <section class="chat-layout">
+                <aside class="chat-sidebar glass-panel">
+                    <h3>Chat Information</h3>
+
+                    <div class="chat-status" id="chat-status">
+                        Runtime: checking...
+                    </div>
+
+                    {% if latest_diagnosis %}
+                    <div class="latest-diagnosis-box">
+                        <h4>Latest Diagnosis Context</h4>
+                        <p><strong>Label:</strong> {{ latest_diagnosis.label }}</p>
+                        <p><strong>Confidence:</strong> {{ latest_diagnosis.confidence }}%</p>
+                        <p><strong>Critical:</strong> {{ latest_diagnosis.is_critical }}</p>
+                    </div>
+                    {% endif %}
+
+                    <button class="submit-btn" id="reset-chat-btn" style="margin-top: 16px;">Reset Conversation</button>
+                </aside>
+
+                <section class="chat-panel glass-panel">
+                    <div class="chat-messages" id="chat-messages">
+                        {% if history|length == 0 %}
+                        <div class="chat-empty">No messages yet. Start with a question.</div>
+                        {% else %}
+                        {% for msg in history %}
+                        <div class="chat-bubble {{ msg.role }}">
+                            <div class="chat-role">{{ msg.role|title }}</div>
+                            <div class="chat-text">{{ msg.content }}</div>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <form id="chat-form" class="chat-input-row">
+                        <textarea id="chat-input" placeholder="Type your question..." required></textarea>
+                        <button type="submit" class="submit-btn"
+                            style="width: auto; margin-top: 0; padding: 0 18px;">Send</button>
+                    </form>
+
+                    <div class="chat-disclaimer">
+                        Educational support only, not a medical diagnosis.
+                    </div>
+                </section>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Medical AI Diagnostic System. Not intended for clinical use without human supervision.</p>
+        </footer>
+    </div>
+
+    <script>
+        (() => {
+            const messagesEl = document.getElementById('chat-messages');
+            const inputEl = document.getElementById('chat-input');
+            const formEl = document.getElementById('chat-form');
+            const statusEl = document.getElementById('chat-status');
+            const resetBtn = document.getElementById('reset-chat-btn');
+
+            const escapeHtml = (text) =>
+                text
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+
+            const addBubble = (role, text) => {
+                const empty = messagesEl.querySelector('.chat-empty');
+                if (empty) empty.remove();
+
+                const wrap = document.createElement('div');
+                wrap.className = `chat-bubble ${role}`;
+                wrap.innerHTML = `
+                    <div class="chat-role">${role === 'assistant' ? 'Assistant' : 'User'}</div>
+                    <div class="chat-text">${escapeHtml(text).replace(/\n/g, '<br>')}</div>
+                `;
+                messagesEl.appendChild(wrap);
+                messagesEl.scrollTop = messagesEl.scrollHeight;
+            };
+
+            const setRuntimeStatus = async () => {
+                try {
+                    const res = await fetch('/api/chat/health');
+                    const data = await res.json();
+                    if (data.ok) {
+                        statusEl.textContent = 'Runtime: llama-server online';
+                        statusEl.classList.add('ok');
+                    } else {
+                        statusEl.textContent = 'Runtime: llama-server offline';
+                        statusEl.classList.remove('ok');
+                    }
+                } catch (err) {
+                    statusEl.textContent = 'Runtime: check failed';
+                    statusEl.classList.remove('ok');
+                }
+            };
+
+            formEl.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const message = inputEl.value.trim();
+                if (!message) return;
+
+                addBubble('user', message);
+                inputEl.value = '';
+
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message,
+                        use_latest_diagnosis: true
+                    })
+                });
+
+                const data = await res.json();
+                if (!data.success) {
+                    addBubble('assistant', `Error: ${data.error || 'Chat request failed.'}`);
+                    return;
+                }
+
+                addBubble('assistant', data.reply || 'No response');
+            });
+
+            resetBtn.addEventListener('click', async () => {
+                await fetch('/api/chat/reset', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})
+                });
+                messagesEl.innerHTML = '<div class="chat-empty">Conversation cleared.</div>';
+            });
+
+            setRuntimeStatus();
+        })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,19 @@
+{
+    "classes": [
+        "glioma",
+        "meningioma",
+        "notumor",
+        "pituitary"
+    ],
+    "num_classes": 4,
+    "class_indices": {
+        "glioma": 0,
+        "meningioma": 1,
+        "notumor": 2,
+        "pituitary": 3
+    },
+    "input_size": [
+        224,
+        224
+    ]
+}

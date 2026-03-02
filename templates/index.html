@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical AI Diagnostic System</title>
+    <!-- Modern Font: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Main Header -->
+        <header class="app-header">
+            <div class="header-nav">
+                <div class="logo-header">
+                    <a href="{{ url_for('index') }}">
+                        <h1>MedAI</h1>
+                        <span>Diagnostic System</span>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <div class="hero-badge">AI-Powered Health Insights</div>
+                <h2>The Future of<br>Medical Diagnosis</h2>
+                <p>Select a specialized diagnostic tool below to upload your medical imaging and receive instant,
+                    AI-driven analysis with high precision confidence metrics.</p>
+            </section>
+
+            <!-- Tools Grid -->
+            <section class="tools-grid">
+                <!-- Tool 1: Pneumonia -->
+                <a href="{{ url_for('diagnose', disease_type='pneumonia') }}" class="tool-card pneumonia">
+                    <div class="tool-icon-wrapper">🫁</div>
+                    <h3>Pneumonia Detection</h3>
+                    <p>Analyzes chest X-ray images to detect and classify signs of pneumonia using advanced EfficientNet
+                        models.</p>
+                    <div class="tool-action">Start Scan <span>→</span></div>
+                </a>
+
+                <!-- Tool 2: Brain Tumor -->
+                <a href="{{ url_for('diagnose', disease_type='brain_tumor') }}" class="tool-card brain">
+                    <div class="tool-icon-wrapper">🧠</div>
+                    <h3>Brain Tumor Analysis</h3>
+                    <p>Detects and classifies different types of brain tumors (Glioma, Meningioma, Pituitary) from MRI
+                        scans.</p>
+                    <div class="tool-action">Start Scan <span>→</span></div>
+                </a>
+
+                <!-- Tool 3: Fetal Ultrasound -->
+                <a href="{{ url_for('diagnose', disease_type='fetal_ultrasound') }}" class="tool-card fetal">
+                    <div class="tool-icon-wrapper">👶</div>
+                    <h3>Fetal Ultrasound</h3>
+                    <p>Performs semantic segmentation on fetal ultrasound images to outline and detect the fetal head
+                        contour.</p>
+                    <div class="tool-action">Start Scan <span>→</span></div>
+                </a>
+
+                <!-- Footer -->
+                <footer>
+                    <p>&copy; 2026 Medical AI Diagnostic System. Not intended for clinical use without human
+                        supervision.</p>
+                </footer>
+    </div>
+
+    <!-- Floating Chatbot Widget -->
+    <div class="chatbot-widget" id="chatbot-widget">
+        <div class="chatbot-header" id="chatbot-header">
+            <span>🩺 NLP AI Assistant</span>
+            <button class="chatbot-close-btn" id="chatbot-close-btn">&times;</button>
+        </div>
+        <div class="chatbot-messages" id="chatbot-messages">
+            <div class="chat-bubble assistant">
+                <div class="chat-text">Hello! I am your AI medical assistant. How can I help you?</div>
+            </div>
+        </div>
+        <form class="chatbot-input-area" id="chatbot-form">
+            <input type="text" id="chatbot-input" placeholder="Type a medical question..." autocomplete="off" required>
+            <button type="submit" class="chatbot-send-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </form>
+    </div>
+
+    <button class="chatbot-launcher" id="chatbot-launcher">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const launcher = document.getElementById('chatbot-launcher');
+            const widget = document.getElementById('chatbot-widget');
+            const closeBtn = document.getElementById('chatbot-close-btn');
+            const form = document.getElementById('chatbot-form');
+            const input = document.getElementById('chatbot-input');
+            const messagesContainer = document.getElementById('chatbot-messages');
+
+            launcher.addEventListener('click', () => {
+                widget.style.display = 'flex';
+                launcher.style.display = 'none';
+            });
+
+            closeBtn.addEventListener('click', () => {
+                widget.style.display = 'none';
+                launcher.style.display = 'flex';
+            });
+
+            const escapeHtml = (text) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+            const addMessage = (role, text) => {
+                const wrap = document.createElement('div');
+                wrap.className = `chat-bubble ${role}`;
+                wrap.innerHTML = `<div class="chat-text">${escapeHtml(text).replace(/\n/g, '<br>')}</div>`;
+                messagesContainer.appendChild(wrap);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            };
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const msg = input.value.trim();
+                if (!msg) return;
+
+                addMessage('user', msg);
+                input.value = '';
+
+                try {
+                    const res = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: msg, use_latest_diagnosis: false })
+                    });
+                    const data = await res.json();
+
+                    if (data.success) {
+                        addMessage('assistant', data.reply);
+                    } else {
+                        addMessage('assistant', 'Error: ' + (data.error || 'Failed to connect to NLP service.'));
+                    }
+                } catch (error) {
+                    addMessage('assistant', 'Network Error: Could not reach the server.');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

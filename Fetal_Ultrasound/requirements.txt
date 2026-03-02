@@ -1,0 +1,10 @@
+# Fetal ultrasound segmentation module requirements
+# Use Python 3.10 or 3.11
+tensorflow==2.15.0
+numpy==1.24.3
+opencv-python-headless==4.9.0.80
+scikit-learn==1.4.0
+matplotlib==3.8.2
+pandas==2.1.4
+tqdm==4.66.1
+Pillow==10.2.0

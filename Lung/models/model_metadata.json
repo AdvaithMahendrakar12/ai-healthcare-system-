@@ -1,0 +1,75 @@
+{
+  "model_info": {
+    "name": "Pneumonia_Detection_Enhanced",
+    "version": "1.0",
+    "architecture": "EfficientNetB3",
+    "task": "Binary Classification - Pneumonia Detection",
+    "training_date": "2026-01-13 13:27:15",
+    "input_shape": [
+      320,
+      320,
+      3
+    ],
+    "output_classes": [
+      "NORMAL",
+      "PNEUMONIA"
+    ]
+  },
+  "training_config": {
+    "image_size": [
+      320,
+      320
+    ],
+    "batch_size": 16,
+    "initial_epochs": 20,
+    "finetune_epochs": 25,
+    "initial_learning_rate": 0.001,
+    "finetune_learning_rate": 1e-05,
+    "optimizer": "Adam",
+    "loss_function": "binary_crossentropy",
+    "dropout_rate": 0.5,
+    "l2_regularization": 0.01
+  },
+  "dataset_info": {
+    "training_samples": 5216,
+    "validation_samples": 16,
+    "test_samples": 624,
+    "class_distribution": {
+      "NORMAL": 1341,
+      "PNEUMONIA": 3875
+    }
+  },
+  "performance_metrics": {
+    "accuracy": 0.7403846153846154,
+    "auc_roc": 0.8152531229454306,
+    "sensitivity_recall": 0.8692307692307693,
+    "specificity": 0.5256410256410257,
+    "precision": 0.7533333333333333,
+    "f1_score": 0.807142857142857,
+    "npv": 0.7068965517241379,
+    "false_positive_rate": 0.47435897435897434,
+    "false_negative_rate": 0.13076923076923078,
+    "optimal_threshold": 0.6582961082458496,
+    "confusion_matrix": [
+      [
+        123,
+        111
+      ],
+      [
+        51,
+        339
+      ]
+    ]
+  },
+  "augmentation": {
+    "rotation_range": 15,
+    "width_shift_range": 0.15,
+    "height_shift_range": 0.15,
+    "zoom_range": 0.15,
+    "horizontal_flip": true,
+    "brightness_range": [
+      0.85,
+      1.15
+    ]
+  }
+}

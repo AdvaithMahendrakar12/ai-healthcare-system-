@@ -1,9 +1,36 @@
-*.h5
-models/
+# Virtual env
+venv/
+
+# Python
 __pycache__/
 *.pyc
-.env
+
+# Models
+*.h5
+*.pt
+*.pth
+
+# Datasets
 dataset/
+datasets/
+*/datasets/
+
+# Training outputs
+*/results/
+*/training/*.csv
+*/training/*.png
+*/training/*.json
+
+# Logs
 logs/
+*.log
+
+# Uploads & generated
+static/uploads/
+static/results/
+
+# OS
 .DS_Store
 
+# Env
+.env

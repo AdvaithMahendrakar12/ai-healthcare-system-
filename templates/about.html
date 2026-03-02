@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Medical AI Diagnostic System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <h1><a href="{{ url_for('index') }}">Medical AI Diagnostic System</a></h1>
+    </header>
+    <main>
+        <h2>About This System</h2>
+        <p>This system uses advanced machine learning models to assist in the diagnosis of various medical conditions.</p>
+        <p>Our goal is to provide a tool that can help medical professionals in their work, leading to faster and more accurate diagnoses.</p>
+        
+        <h3>Models Used</h3>
+        <ul>
+            <li><strong>Pneumonia Detection:</strong> An EfficientNetB3 model trained on chest X-ray images.</li>
+            <li><strong>Brain Tumor Classification:</strong> An EfficientNetV2S model trained on brain MRI images.</li>
+            <li><strong>Fetal Ultrasound Analysis:</strong> A U-Net model for semantic segmentation of fetal ultrasound images.</li>
+        </ul>
+    </main>
+    <footer>
+        <p>&copy; 2026 Medical AI Diagnostic System</p>
+    </footer>
+</body>
+</html>

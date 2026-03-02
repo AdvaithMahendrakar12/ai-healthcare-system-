@@ -23,11 +23,11 @@ import seaborn as sns
 class AdvancedModelTester:
     def __init__(self):
         self.model_paths = [
-            'models/brain_tumor_model.h5',
-            'models/brain_tumor_final.keras',
-            'models/brain_tumor_best.h5'
+            'brain_tumor/models/brain_tumor_model.h5',
+            'brain_tumor/models/brain_tumor_final.keras',
+            'brain_tumor/models/brain_tumor_best.h5'
         ]
-        self.class_labels_path = 'models/class_labels.json'
+        self.class_labels_path = 'brain_tumor/models/class_labels.json'
         self.img_size = (224, 224)
         self.tta_steps = 5
         
@@ -111,7 +111,7 @@ class AdvancedModelTester:
         
         return np.mean(all_preds, axis=0)
     
-    def test_on_directory(self, test_dir='cleaned_data/Testing', use_tta=True):
+    def test_on_directory(self, test_dir='brain_tumor/cleaned_data/Testing', use_tta=True):
         """Test model on entire test directory"""
         print("\n" + "="*70)
         print("🧪 COMPREHENSIVE MODEL TESTING")
@@ -206,7 +206,7 @@ class AdvancedModelTester:
         
         return np.mean(all_preds, axis=0)
     
-    def test_sample_images(self, test_dir='cleaned_data/Testing', samples_per_class=3):
+    def test_sample_images(self, test_dir='brain_tumor/cleaned_data/Testing', samples_per_class=3):
         """Test on sample images from each class"""
         print("\n" + "="*70)
         print("🖼️ SAMPLE IMAGE PREDICTIONS")
@@ -309,8 +309,8 @@ class AdvancedModelTester:
             plt.title('Sample Test Summary', fontsize=14, fontweight='bold')
         
         plt.tight_layout()
-        plt.savefig('results/test_results_visualization.png', dpi=200, bbox_inches='tight')
-        print("✅ Visualization saved to: results/test_results_visualization.png")
+        plt.savefig('brain_tumor/results/test_results_visualization.png', dpi=200, bbox_inches='tight')
+        print("✅ Visualization saved to: brain_tumor/results/test_results_visualization.png")
         plt.close()
     
     def save_results(self, cm, accuracy_standard, accuracy_tta=None):
@@ -325,24 +325,24 @@ class AdvancedModelTester:
             }
         }
         
-        with open('results/final_test_results.json', 'w') as f:
+        with open('brain_tumor/results/final_test_results.json', 'w') as f:
             json.dump(results, f, indent=4)
         
-        print("✅ Results saved to: results/final_test_results.json")
+        print("✅ Results saved to: brain_tumor/results/final_test_results.json")
 
 def main():
     """Run comprehensive model testing"""
     
     # Check for model
     model_exists = any(os.path.exists(p) for p in [
-        'models/brain_tumor_model.h5',
-        'models/brain_tumor_final.keras',
-        'models/brain_tumor_best.h5'
+        'brain_tumor/models/brain_tumor_model.h5',
+        'brain_tumor/models/brain_tumor_final.keras',
+        'brain_tumor/models/brain_tumor_best.h5'
     ])
     
     if not model_exists:
         print("❌ ERROR: No trained model found!")
-        print("➡️  Please run: python 2_train_model.py first")
+        print("➡️  Please run: python brain_tumor/2_train_model.py first")
         return
     
     # Create tester

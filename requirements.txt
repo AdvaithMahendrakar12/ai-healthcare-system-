@@ -1,37 +1,38 @@
-# Brain Hemorrhage Segmentation - Requirements
-# Resolved dependency conflicts
+# Flask Web Framework
+flask==3.0.3
+gunicorn==22.0.0
+werkzeug==3.0.3
+flask-cors==4.0.0
 
-# Core Deep Learning
-torch>=2.0.0
-torchvision>=0.15.0
+# TensorFlow for ML Models (CPU version recommended for Render)
+# Use tensorflow-cpu==2.15.0 for Render deployment to reduce build size
+tensorflow==2.15.0
 
-# Medical Imaging
-monai>=1.3.0
-nibabel>=5.0.0
-pydicom>=2.4.0
-
-# Scientific Computing (Compatible versions)
-numpy>=2.0.0
-pandas>=2.2.2
-scikit-learn==1.7.1
-
-# Image Processing
-opencv-python>=4.8.0
-Pillow>=10.0.0
-
-# Flask API
-flask>=3.0.0
-werkzeug>=3.0.0
-flask-cors>=4.0.0
+# Scientific Computing & Image Processing
+numpy==1.24.3
+opencv-python-headless==4.9.0.80
+Pillow==10.2.0
+scikit-learn==1.4.0
 
 # Utilities
-tqdm>=4.65.0
-pyyaml>=6.0
-tensorboard>=2.14.0
+tqdm>=4.66.3
 
-# Optional: For visualization
-matplotlib>=3.7.0
-seaborn>=0.12.0
+# Local chatbot training stack (no hosted inference API)
+transformers==4.46.3
+datasets==2.21.0
+peft==0.13.2
+accelerate==0.34.2
+sentencepiece==0.2.0
+safetensors==0.4.5
 
-# Optional: For DICOM conversion
-SimpleITK>=2.3.0
+
+
+# NLP / Embeddings
+sentence-transformers>=2.2.2
+
+torch>=2.0.0
+
+# Vector Search
+faiss-cpu>=1.7.4
+
+requests>=2.31.0

@@ -9,8 +9,8 @@ import json
 
 class DatasetCleaner:
     def __init__(self):
-        self.raw_data_dir = 'datasets/brain_tumor'
-        self.cleaned_data_dir = 'cleaned_data'
+        self.raw_data_dir = 'brain_tumor/datasets/brain_tumor'
+        self.cleaned_data_dir = 'brain_tumor/cleaned_data'
         self.target_size = (224, 224)
         self.classes = ['glioma', 'meningioma', 'notumor', 'pituitary']
         
@@ -31,8 +31,8 @@ class DatasetCleaner:
                 path = os.path.join(self.cleaned_data_dir, split, class_name)
                 os.makedirs(path, exist_ok=True)
         
-        os.makedirs('models', exist_ok=True)
-        os.makedirs('results', exist_ok=True)
+        os.makedirs('brain_tumor/models', exist_ok=True)
+        os.makedirs('brain_tumor/results', exist_ok=True)
         print("✅ Directories created!")
     
     def is_valid_image(self, img_path):
@@ -159,10 +159,10 @@ class DatasetCleaner:
             print(f"  {key}: {count} images")
         
         # Save report
-        with open('results/cleaning_report.json', 'w') as f:
+        with open('brain_tumor/results/cleaning_report.json', 'w') as f:
             json.dump(self.stats, f, indent=4)
         
-        print("\n✅ Report saved to: results/cleaning_report.json")
+        print("\n✅ Report saved to: brain_tumor/results/cleaning_report.json")
         print("="*70)
     
     def run(self):

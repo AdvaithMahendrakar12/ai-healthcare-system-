@@ -1,150 +1,181 @@
-import cv2
-import os
-import numpy as np
-from tqdm import tqdm
-from sklearn.model_selection import train_test_split
+from __future__ import annotations
+
+import argparse
+import logging
 import shutil
+from pathlib import Path
+from typing import List, Tuple
 
-IMG_SIZE = 256
+from sklearn.model_selection import train_test_split
+from tqdm import tqdm
 
-def ensure_dir(directory):
-    """Create directory if it doesn't exist."""
-    if os.path.exists(directory):
-        shutil.rmtree(directory)
-    os.makedirs(directory)
+LOGGER = logging.getLogger("fetal_ultrasound.preprocessing")
 
-def apply_clahe(image):
-    """Apply CLAHE (Contrast Limited Adaptive Histogram Equalization) for better contrast."""
+
+def configure_logging(level: str = "INFO") -> None:
+    logging.basicConfig(
+        level=getattr(logging, level.upper(), logging.INFO),
+        format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+    )
+
+
+def mask_name_for_image(image_name: str) -> str:
+    if image_name.endswith("_HC.png"):
+        return image_name.replace("_HC.png", "_HC_Annotation.png")
+    return f"{Path(image_name).stem}_Annotation.png"
+
+
+def discover_pairs(source_dir: Path) -> List[Tuple[Path, Path]]:
+    image_dir = source_dir / "images"
+    mask_dir = source_dir / "masks"
+
+    pairs: List[Tuple[Path, Path]] = []
+    if image_dir.exists() and mask_dir.exists():
+        for image_path in sorted(image_dir.glob("*.png")):
+            mask_path = mask_dir / mask_name_for_image(image_path.name)
+            if mask_path.exists():
+                pairs.append((image_path, mask_path))
+        return pairs
+
+    for image_path in sorted(source_dir.glob("*.png")):
+        if image_path.name.endswith("_Annotation.png"):
+            continue
+        mask_path = source_dir / mask_name_for_image(image_path.name)
+        if mask_path.exists():
+            pairs.append((image_path, mask_path))
+
+    return pairs
+
+
+def prepare_split_dirs(output_dir: Path) -> None:
+    for split in ("train", "val", "test"):
+        split_dir = output_dir / split
+        if split_dir.exists():
+            shutil.rmtree(split_dir)
+        (split_dir / "images").mkdir(parents=True, exist_ok=True)
+        (split_dir / "masks").mkdir(parents=True, exist_ok=True)
+
+
+def preprocess_and_write(
+    image_path: Path,
+    mask_path: Path,
+    out_image_path: Path,
+    out_mask_path: Path,
+    img_size: int,
+) -> None:
+    import cv2
+
+    image = cv2.imread(str(image_path), cv2.IMREAD_GRAYSCALE)
+    mask = cv2.imread(str(mask_path), cv2.IMREAD_GRAYSCALE)
+
+    if image is None:
+        raise ValueError(f"Failed to read image: {image_path}")
+    if mask is None:
+        raise ValueError(f"Failed to read mask: {mask_path}")
+
+    image = cv2.resize(image, (img_size, img_size), interpolation=cv2.INTER_AREA)
+    mask = cv2.resize(mask, (img_size, img_size), interpolation=cv2.INTER_NEAREST)
+
     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-    return clahe.apply(image)
+    image = clahe.apply(image)
+    image = cv2.normalize(image, None, 0, 255, cv2.NORM_MINMAX)
+    image = cv2.fastNlMeansDenoising(image, None, h=10, templateWindowSize=7, searchWindowSize=21)
 
-def normalize_image(image):
-    """Normalize image to 0-255 range."""
-    return cv2.normalize(image, None, 0, 255, cv2.NORM_MINMAX)
+    _, mask = cv2.threshold(mask, 127, 255, cv2.THRESH_BINARY)
 
-def clean_and_organize_data(source_dir, output_dir, val_split=0.15, test_split=0.10):
-    """
-    Clean and organize fetal ultrasound dataset into train/val/test sets.
-    
-    Args:
-        source_dir: Directory containing raw images (e.g., dataset/train)
-        output_dir: Base directory for organized data (e.g., dataset)
-        val_split: Validation split ratio (default: 0.15)
-        test_split: Test split ratio (default: 0.10)
-    """
-    
-    print("=" * 60)
-    print("FETAL ULTRASOUND DATA PREPROCESSING")
-    print("=" * 60)
-    
-    # Get all image files (not annotations)
-    all_files = [f for f in os.listdir(source_dir) 
-                 if f.endswith('_HC.png') and '_Annotation' not in f]
-    all_files.sort()
-    
-    print(f"\n✓ Found {len(all_files)} ultrasound images")
-    
-    # Split data: train (75%), val (15%), test (10%)
-    train_files, temp_files = train_test_split(
-        all_files, test_size=(val_split + test_split), random_state=42, shuffle=True
+    cv2.imwrite(str(out_image_path), image)
+    cv2.imwrite(str(out_mask_path), mask)
+
+
+def run_preprocessing(
+    source_dir: Path,
+    output_dir: Path,
+    img_size: int,
+    val_split: float,
+    test_split: float,
+    seed: int,
+) -> None:
+    if source_dir.resolve() == output_dir.resolve():
+        raise ValueError("source_dir and output_dir cannot be identical")
+
+    pairs = discover_pairs(source_dir)
+    if not pairs:
+        raise RuntimeError(f"No image/mask pairs found under {source_dir}")
+
+    LOGGER.info("Found %d valid image/mask pairs", len(pairs))
+
+    train_pairs, temp_pairs = train_test_split(
+        pairs,
+        test_size=(val_split + test_split),
+        random_state=seed,
+        shuffle=True,
     )
-    val_files, test_files = train_test_split(
-        temp_files, test_size=test_split/(val_split + test_split), random_state=42
+    val_pairs, test_pairs = train_test_split(
+        temp_pairs,
+        test_size=test_split / (val_split + test_split),
+        random_state=seed,
+        shuffle=True,
     )
-    
-    print(f"✓ Train set: {len(train_files)} images")
-    print(f"✓ Validation set: {len(val_files)} images")
-    print(f"✓ Test set: {len(test_files)} images")
-    print()
-    
-    # Process each split
+
     splits = {
-        'train': train_files,
-        'val': val_files,
-        'test': test_files
+        "train": train_pairs,
+        "val": val_pairs,
+        "test": test_pairs,
     }
-    
-    stats = {'skipped': 0, 'processed': 0}
-    
-    for split_name, file_list in splits.items():
-        print(f"Processing {split_name} set...")
-        
-        # Create directories
-        img_dir = os.path.join(output_dir, split_name, "images")
-        mask_dir = os.path.join(output_dir, split_name, "masks")
-        ensure_dir(img_dir)
-        ensure_dir(mask_dir)
-        
-        for img_name in tqdm(file_list, desc=f"{split_name.capitalize()}"):
-            # Construct paths
-            img_path = os.path.join(source_dir, img_name)
-            mask_name = img_name.replace('_HC.png', '_HC_Annotation.png')
-            mask_path = os.path.join(source_dir, mask_name)
-            
-            # Check if mask exists
-            if not os.path.exists(mask_path):
-                print(f"⚠ Mask not found for {img_name}, skipping.")
-                stats['skipped'] += 1
-                continue
-            
-            # Read images
-            img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
-            mask = cv2.imread(mask_path, cv2.IMREAD_GRAYSCALE)
-            
-            if img is None or mask is None:
-                print(f"⚠ Failed to read {img_name}, skipping.")
-                stats['skipped'] += 1
-                continue
-            
-            # Preprocessing
-            # 1. Resize
-            img = cv2.resize(img, (IMG_SIZE, IMG_SIZE))
-            mask = cv2.resize(mask, (IMG_SIZE, IMG_SIZE), interpolation=cv2.INTER_NEAREST)
-            
-            # 2. Apply CLAHE for better contrast
-            img = apply_clahe(img)
-            img = normalize_image(img)
-            
-            # 3. Ensure mask is binary (0 or 255)
-            _, mask = cv2.threshold(mask, 127, 255, cv2.THRESH_BINARY)
-            
-            # 4. Denoise image
-            img = cv2.fastNlMeansDenoising(img, None, h=10, templateWindowSize=7, searchWindowSize=21)
-            
-            # Save processed images
-            save_img_path = os.path.join(img_dir, img_name)
-            save_mask_path = os.path.join(mask_dir, mask_name)
-            
-            cv2.imwrite(save_img_path, img)
-            cv2.imwrite(save_mask_path, mask)
-            
-            stats['processed'] += 1
-        
-        print(f"✓ {split_name.capitalize()} set complete!\n")
-    
-    # Print summary
-    print("=" * 60)
-    print("PREPROCESSING SUMMARY")
-    print("=" * 60)
-    print(f"Total images processed: {stats['processed']}")
-    print(f"Total images skipped: {stats['skipped']}")
-    print(f"Train images: {len(train_files)}")
-    print(f"Validation images: {len(val_files)}")
-    print(f"Test images: {len(test_files)}")
-    print("=" * 60)
-    print("\n✓ Data preprocessing complete!")
-    print(f"✓ Organized data saved to: {output_dir}")
-    print("\nNext step: Run train.py to train the model")
+
+    prepare_split_dirs(output_dir)
+
+    skipped = 0
+    processed = 0
+
+    for split_name, split_pairs in splits.items():
+        LOGGER.info("Processing %s split with %d pairs", split_name, len(split_pairs))
+
+        for image_path, mask_path in tqdm(split_pairs, desc=f"{split_name} split"):
+            try:
+                out_image_path = output_dir / split_name / "images" / image_path.name
+                out_mask_path = output_dir / split_name / "masks" / mask_path.name
+                preprocess_and_write(image_path, mask_path, out_image_path, out_mask_path, img_size)
+                processed += 1
+            except Exception:
+                skipped += 1
+                LOGGER.warning("Skipping pair: %s | %s", image_path.name, mask_path.name, exc_info=True)
+
+    LOGGER.info("Preprocessing done: processed=%d skipped=%d", processed, skipped)
+    for split in ("train", "val", "test"):
+        image_count = len(list((output_dir / split / "images").glob("*.png")))
+        mask_count = len(list((output_dir / split / "masks").glob("*.png")))
+        LOGGER.info("%s: images=%d masks=%d", split, image_count, mask_count)
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Clean and split fetal ultrasound dataset")
+    parser.add_argument("--source-dir", type=Path, default=Path("../dataset/train"))
+    parser.add_argument("--output-dir", type=Path, default=Path("../dataset"))
+    parser.add_argument("--img-size", type=int, default=256)
+    parser.add_argument("--val-split", type=float, default=0.15)
+    parser.add_argument("--test-split", type=float, default=0.10)
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--log-level", default="INFO")
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+    configure_logging(args.log_level)
+
+    if args.val_split <= 0 or args.test_split <= 0 or (args.val_split + args.test_split) >= 1:
+        raise ValueError("val_split and test_split must be >0 and sum to <1")
+
+    run_preprocessing(
+        source_dir=args.source_dir,
+        output_dir=args.output_dir,
+        img_size=args.img_size,
+        val_split=args.val_split,
+        test_split=args.test_split,
+        seed=args.seed,
+    )
+
 
 if __name__ == "__main__":
-    # Configure paths
-    SOURCE_DIR = "../dataset/train"  # Raw data directory
-    OUTPUT_DIR = "../dataset"         # Output directory
-    
-    # Run preprocessing
-    clean_and_organize_data(
-        source_dir=SOURCE_DIR,
-        output_dir=OUTPUT_DIR,
-        val_split=0.15,
-        test_split=0.10
-    )
+    main()
